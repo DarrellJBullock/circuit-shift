@@ -78,8 +78,7 @@ persistence, offline guard, monetization invariants, performance budgets). Also 
 
 - ✅ Drafts in `store/`: listing copy (limits checked by `npm run check-listing`), review notes, age
   rating, privacy policy and support page. The policy and support page need review and publishing.
-- ⬜ Screenshots: capture from the Release build on the "Circuit Shift Screenshots" simulator
-  (`xcrun simctl io <udid> screenshot --type=png`) at 1320×2868. No mock-ups or overlays that
-  misrepresent gameplay.
+- ✅ Screenshots: `store/screenshots/01–06` (6.9", 1320×2868), real captures from the Release build.
+  Upload in that order (gameplay first). Recapture if the UI changes visibly.
 - ✅ App icon: original rendered art (`npm run render-brand-assets`); optional designer pass.
 - **IAPs for 1.0:** submit "Remove Ads" only. The app hides premium products until premium content exists.

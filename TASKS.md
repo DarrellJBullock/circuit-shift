@@ -111,8 +111,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ todo · 🔑 needs an external decis
 - ✅ `store/review-notes.md`, `store/age-rating.md` (expected 4+)
 - ✅ `store/privacy-policy-draft.md` and `store/support-page-draft.md`: accurate to the code, clearly marked DRAFT with placeholders; need legal review
 - ✅ **Review-risk fix:** "Premium Chapters" and "Founder Bundle" are hidden until a premium chapter actually exists (no selling content that isn't there); a test guards it. Submit only "Remove Ads" with 1.0
-- ✅ Dedicated screenshot simulator ("Circuit Shift Screenshots", 6.9", 1320×2868) with the Release build installed, seeded mid-campaign progress, clean status bar; Home captured (`store/screenshots/raw-home.png`)
-- ⬜ Remaining screenshots (gameplay mid-solve, chapter 3 colours, completion, Daily, Chapters): blocked on simulator access permission for the screenshot device
+- ✅ **Six App Store screenshots** (6.9", 1320×2868, no alpha) captured from the Release build on a dedicated simulator: gameplay mid-solve, chapter 3 colours, ★★★ completion, Daily, Chapters, Home. Provenance in `store/screenshots/README.md`
 - 🔑 Publish the privacy policy and support pages; put their URLs in App Store Connect and Settings
 - 🔑 App Store Connect: app record, "Remove Ads" IAP, listing, age rating, privacy labels (RELEASE.md §3)
 - 🔑 `eas build -p ios --profile production` then `eas submit` (Apple credentials), TestFlight pass with RELEASE.md §4, then Submit for Review
