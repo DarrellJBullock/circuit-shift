@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, Text, View } from 'react-native';
 
+import { CHAPTERS } from '@/levels/registry';
 import { track } from '@/services/analytics/analytics';
 import type { Entitlement, ProductKey } from '@/services/monetization';
 import { type StoreProduct, purchases } from '@/services/purchases';
@@ -27,6 +28,17 @@ const COPY: Readonly<Record<ProductKey, { title: string; body: string; grants: r
     grants: ['no_ads', 'premium_content'],
   },
 };
+
+/**
+ * Products that promise premium chapters are only offered once a premium
+ * chapter actually ships. Selling content that does not exist yet would
+ * mislead buyers and fail App Review (Guidelines 2.3 / 3.1.1).
+ */
+export const PREMIUM_CONTENT_AVAILABLE = CHAPTERS.some((c) => c.premium);
+
+export function isOffered(key: ProductKey): boolean {
+  return PREMIUM_CONTENT_AVAILABLE || !COPY[key].grants.includes('premium_content');
+}
 
 export default function Shop() {
   const status = purchases.status();
@@ -94,7 +106,7 @@ export default function Shop() {
       ) : null}
 
       <View style={styles.list}>
-        {(products ?? []).map((p) => {
+        {(products ?? []).filter((p) => isOffered(p.key)).map((p) => {
           const copy = COPY[p.key];
           const owned = copy.grants.every((g) => active.has(g));
           return (

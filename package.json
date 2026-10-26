@@ -1,6 +1,6 @@
 {
   "name": "circuit-shift",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
     "@shopify/react-native-skia": "2.14.0",
@@ -54,7 +54,8 @@
     "generate-levels": "tsx scripts/generate-levels.ts",
     "synthesize-sfx": "tsx scripts/synthesize-sfx.ts",
     "level-report": "tsx scripts/level-report.ts",
-    "render-brand-assets": "tsx scripts/render-brand-assets.ts"
+    "render-brand-assets": "tsx scripts/render-brand-assets.ts",
+    "check-listing": "tsx scripts/check-listing.ts"
   },
   "private": true,
   "jest": {

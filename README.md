@@ -3,7 +3,7 @@
 A premium, offline-first sci-fi puzzle game by **Evercrest Interactive**. Rotate circuit tiles to route
 power from sources to receivers. iOS first; the architecture is Android-compatible.
 
-> Status: **Phase 7 complete (pending your accounts)**: balanced 60-level campaign, release regression suite, EAS profiles and release runbook. See [RELEASE.md](RELEASE.md) for TestFlight. See [TASKS.md](TASKS.md).
+> Status: **1.0.0 release candidate**: all eight phases are implemented. Store submission is waiting on Evercrest accounts, URLs and screenshots; see [RELEASE.md](RELEASE.md), [store/](store/) and [TASKS.md](TASKS.md). See [TASKS.md](TASKS.md).
 
 ## Quick start
 
