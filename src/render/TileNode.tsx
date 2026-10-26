@@ -6,6 +6,7 @@ import {
   useDerivedValue,
   useSharedValue,
   withDelay,
+  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -23,8 +24,14 @@ export interface TileNodeProps {
   readonly shorted: boolean;
   readonly depth: number;
   readonly satisfied: boolean;
+  /** Receivers: colours its objective accepts (more than one = neutral "compatible" receiver). */
+  readonly accepts?: readonly SignalColor[];
   /** World-orientation port where power enters (0 = none / source). */
   readonly inPort: number;
+  /** Changes (non-zero) each time this tile receives a hint; triggers a brief highlight. */
+  readonly hintNonce: number;
+  /** Tutorial guide ring: this tile still needs rotating. */
+  readonly guided?: boolean;
   readonly clock: SharedValue<number>;
   readonly reduceMotion: boolean;
 }
@@ -32,7 +39,7 @@ export interface TileNodeProps {
 const QUARTER = Math.PI / 2;
 
 function TileNodeImpl(props: TileNodeProps) {
-  const { tile, x, y, cell, color, shorted, depth, satisfied, inPort, clock, reduceMotion } = props;
+  const { tile, x, y, cell, color, shorted, depth, satisfied, accepts, inPort, hintNonce, guided = false, clock, reduceMotion } = props;
   const inset = Math.max(2, cell * 0.04);
   const wireW = Math.max(4, cell * 0.13);
   const center = cell / 2;
@@ -65,6 +72,21 @@ function TileNodeImpl(props: TileNodeProps) {
           withTiming(to, { duration: motion.fadeMs }),
         );
   }, [energized, depth, reduceMotion, glow]);
+
+  // Hint highlight: show an amber ring, hold, then fade (instant under reduced motion).
+  const hintGlow = useSharedValue(0);
+  useEffect(() => {
+    if (!hintNonce) return;
+    hintGlow.value = withSequence(
+      withTiming(1, { duration: reduceMotion ? 0 : 120 }),
+      withDelay(motion.hintHoldMs, withTiming(0, { duration: reduceMotion ? 0 : 400 })),
+    );
+  }, [hintNonce, reduceMotion, hintGlow]);
+
+  const guideOpacity = useDerivedValue(() => {
+    if (!guided) return 0;
+    return reduceMotion ? 0.8 : 0.45 + 0.35 * (0.5 + 0.5 * Math.sin(clock.value / 300));
+  });
 
   // Keep the last live colour while power fades out, so a violet wire does
   // not flash cyan on disconnect. (Adjusting state during render is the
@@ -122,7 +144,10 @@ function TileNodeImpl(props: TileNodeProps) {
 
   const tileFill = tile.locked ? colors.tileLocked : colors.tile;
   const glyphColor = (c: SignalColor) => signalColor[c];
-  const sigColor: SignalColor = tile.meta?.color ?? 'cyan';
+  const sigColor: SignalColor = tile.meta?.color ?? accepts?.[0] ?? 'cyan';
+  const neutral = tile.type === 'receiver' && (accepts?.length ?? 1) > 1;
+  // Neutral receivers show white until powered, then the colour that arrived.
+  const ringColor = neutral ? (satisfied && color ? signalColor[color] : colors.text) : glyphColor(sigColor);
   const isHub = !endpoint && portCount(tile.baseMask) >= 3;
 
   return (
@@ -145,6 +170,30 @@ function TileNodeImpl(props: TileNodeProps) {
         style="stroke"
         strokeWidth={tile.locked ? 1 : 1.5}
       />
+      <Group opacity={guideOpacity}>
+        <RoundedRect
+          x={inset}
+          y={inset}
+          width={cell - inset * 2}
+          height={cell - inset * 2}
+          r={cell * 0.16}
+          color={colors.source}
+          style="stroke"
+          strokeWidth={Math.max(2, cell * 0.035)}
+        />
+      </Group>
+      <Group opacity={hintGlow}>
+        <RoundedRect
+          x={inset}
+          y={inset}
+          width={cell - inset * 2}
+          height={cell - inset * 2}
+          r={cell * 0.16}
+          color={colors.source}
+          style="stroke"
+          strokeWidth={Math.max(2.5, cell * 0.05)}
+        />
+      </Group>
 
       {/* Wires (rotate as a unit). */}
       <Group transform={rotate} origin={origin}>
@@ -197,27 +246,31 @@ function TileNodeImpl(props: TileNodeProps) {
       {tile.type === 'receiver' ? (
         <Group>
           <Group opacity={satisfied ? glowOpacity : 0}>
-            <Circle cx={center} cy={center} r={bodyR * 1.3} color={glyphColor(sigColor)}>
+            <Circle cx={center} cy={center} r={bodyR * 1.3} color={ringColor}>
               <BlurMask blur={bodyR * 0.7} style="normal" />
             </Circle>
           </Group>
-          <Circle cx={center} cy={center} r={bodyR} color={satisfied ? glyphColor(sigColor) : colors.background} />
+          <Circle cx={center} cy={center} r={bodyR} color={satisfied ? ringColor : colors.background} />
           <Circle
             cx={center}
             cy={center}
             r={bodyR}
             style="stroke"
             strokeWidth={Math.max(2, cell * 0.04)}
-            color={glyphColor(sigColor)}
+            color={ringColor}
             opacity={satisfied ? 1 : 0.7}
           />
-          <SignalGlyph
-            color={sigColor}
-            cx={center}
-            cy={center}
-            r={bodyR * 0.42}
-            fill={satisfied ? colors.background : glyphColor(sigColor)}
-          />
+          {neutral ? (
+            <NeutralGlyph cx={center} cy={center} r={bodyR * 0.42} fill={satisfied ? colors.background : ringColor} />
+          ) : (
+            <SignalGlyph
+              color={sigColor}
+              cx={center}
+              cy={center}
+              r={bodyR * 0.42}
+              fill={satisfied ? colors.background : ringColor}
+            />
+          )}
         </Group>
       ) : null}
 
@@ -242,6 +295,18 @@ function SignalGlyph(props: { color: SignalColor; cx: number; cy: number; r: num
   const { color, cx, cy, r, fill } = props;
   const diamond = useMemo(() => diamondPath(cx, cy, r * 1.15), [cx, cy, r]);
   return color === 'violet' ? <Path path={diamond} color={fill} /> : <Circle cx={cx} cy={cy} r={r * 0.8} color={fill} />;
+}
+
+/** Compatible receiver: diamond outline around a dot (reads as "either signal"). */
+function NeutralGlyph(props: { cx: number; cy: number; r: number; fill: string }) {
+  const { cx, cy, r, fill } = props;
+  const diamond = useMemo(() => diamondPath(cx, cy, r * 1.25), [cx, cy, r]);
+  return (
+    <Group>
+      <Path path={diamond} color={fill} style="stroke" strokeWidth={Math.max(1.5, r * 0.3)} />
+      <Circle cx={cx} cy={cy} r={r * 0.4} color={fill} />
+    </Group>
+  );
 }
 
 export const TileNode = memo(TileNodeImpl);

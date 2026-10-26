@@ -45,3 +45,31 @@ describe('progress merge', () => {
     expect(b).toEqual({ levelId: 'x', completed: true, bestStars: 2, bestMoves: 10, bestTimeMs: 5000 });
   });
 });
+
+describe('hints', () => {
+  it('applies solver steps from the current board, up to the free limit', () => {
+    useGame.getState().start(level.id);
+    // Wander off first: hints must work from the player's state, not the start.
+    useGame.getState().dispatch({ type: 'rotate', index: 1 });
+    useGame.getState().dispatch({ type: 'rotate', index: 1 });
+    const results = [1, 2, 3, 4].map(() => useGame.getState().requestHint());
+    expect(results.slice(0, 3).every((r) => r !== null)).toBe(true);
+    expect(results[3]).toBeNull(); // limit reached
+    const g = useGame.getState().game!;
+    expect(g.hintsUsed).toBe(3);
+    expect(useGame.getState().lastHint).toMatchObject({ nonce: 3 });
+  });
+
+  it('caps a hinted completion at 2 stars', () => {
+    useGame.getState().start('ch1-01'); // one move from solved
+    expect(useGame.getState().requestHint()).not.toBeNull();
+    expect(useGame.getState().game!.status).toBe('won');
+    expect(useGame.getState().completion?.stars).toBe(2);
+  });
+
+  it('gives no hint once solved', () => {
+    useGame.getState().start('ch1-01');
+    useGame.getState().requestHint();
+    expect(useGame.getState().requestHint()).toBeNull();
+  });
+});

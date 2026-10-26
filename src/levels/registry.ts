@@ -1,15 +1,17 @@
 import { chapter1Levels } from './data/chapter1';
+import { chapter2Levels, chapter3Levels } from './data/chapters2and3';
+import { dailyDateOf, dailyLevel, isDailyId } from './daily';
 import type { Chapter, ChapterId, Level } from './schema';
 import { validateLevel } from './validate';
 
 export const CHAPTERS: readonly Chapter[] = [
   { id: 'ch1', order: 1, title: 'Ignition', subtitle: 'Connections, bends and branches', premium: false },
   { id: 'ch2', order: 2, title: 'Grid Lock', subtitle: 'Multiple receivers, branching paths', premium: false },
-  { id: 'ch3', order: 3, title: 'Spectrum', subtitle: 'Coloured signals', premium: false },
+  { id: 'ch3', order: 3, title: 'Spectrum', subtitle: 'Coloured signals: never mix them', premium: false },
 ];
 
 /** Unvalidated shipped data; only scripts and tests should read this directly. */
-export const RAW_LEVELS: readonly Level[] = [...chapter1Levels];
+export const RAW_LEVELS: readonly Level[] = [...chapter1Levels, ...chapter2Levels, ...chapter3Levels];
 
 export interface LevelLoadError {
   readonly id: string;
@@ -37,7 +39,9 @@ export const LEVEL_LOAD_ERRORS: readonly LevelLoadError[] = loaded.errors;
 
 const byId = new Map(LEVELS.map((l) => [l.id, l] as const));
 
+/** Campaign levels by id; `daily-YYYY-MM-DD` ids are generated (and validated) on demand. */
 export function getLevel(id: string): Level | undefined {
+  if (isDailyId(id)) return dailyLevel(dailyDateOf(id)) ?? undefined;
   return byId.get(id);
 }
 

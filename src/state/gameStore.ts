@@ -7,12 +7,14 @@ import {
   computeStars,
   createGame,
   gameReducer,
+  nextHint,
   restoreGame,
 } from '@/engine';
 import { levelFingerprint } from '@/levels/fingerprint';
 import { getLevel } from '@/levels/registry';
 import type { Level } from '@/levels/schema';
 import { levelToPuzzle } from '@/levels/validate';
+import { HINT_SOLVER_LIMITS, hintsRemaining } from '@/play/hintPolicy';
 
 import { useProgress } from './progressStore';
 import { useSession } from './sessionStore';
@@ -30,6 +32,8 @@ interface GameStore {
   readonly completion: CompletionSummary | null;
   /** True when the current game was restored from an interrupted session. */
   readonly resumed: boolean;
+  /** Last hinted tile; `nonce` changes on every hint so the board can flash it. */
+  readonly lastHint: { readonly index: number; readonly nonce: number } | null;
   /**
    * Starts a level, resuming its interrupted session when one matches (same
    * level id and layout fingerprint). `fresh` forces a clean start.
@@ -37,6 +41,12 @@ interface GameStore {
    */
   start(levelId: string, options?: { fresh?: boolean }): boolean;
   dispatch(action: GameAction): void;
+  /**
+   * Applies the next solver step from the current board. Returns the hinted
+   * tile index, or null when no hint is available (none left, not playing,
+   * or the solver could not verify a solution in budget).
+   */
+  requestHint(): number | null;
   clear(): void;
 }
 
@@ -49,6 +59,7 @@ export const useGame = create<GameStore>((set, get) => ({
   game: null,
   completion: null,
   resumed: false,
+  lastHint: null,
 
   start: (levelId, options) => {
     const level = getLevel(levelId);
@@ -64,7 +75,7 @@ export const useGame = create<GameStore>((set, get) => ({
         : null;
     // A restored game is never already won (snapshots are only kept mid-play).
     const game = restored && restored.status !== 'won' ? restored : createGame(puzzle);
-    set({ level, game, completion: null, resumed: game === restored });
+    set({ level, game, completion: null, resumed: game === restored, lastHint: null });
     return true;
   },
 
@@ -97,5 +108,15 @@ export const useGame = create<GameStore>((set, get) => ({
     set({ game: next });
   },
 
-  clear: () => set({ level: null, game: null, completion: null, resumed: false }),
+  requestHint: () => {
+    const { game } = get();
+    if (!game || game.status !== 'playing' || hintsRemaining(game.hintsUsed) === 0) return null;
+    const hint = nextHint(game.puzzle, game.board, HINT_SOLVER_LIMITS);
+    if (!hint) return null;
+    get().dispatch({ type: 'applyHint', index: hint.index, rotation: hint.rotation });
+    set({ lastHint: { index: hint.index, nonce: (get().lastHint?.nonce ?? 0) + 1 } });
+    return hint.index;
+  },
+
+  clear: () => set({ level: null, game: null, completion: null, resumed: false, lastHint: null }),
 }));

@@ -16,10 +16,21 @@ jest.mock('@shopify/react-native-skia', () => {
 jest.mock('@/render/TileNode', () => ({ TileNode: () => null }));
 jest.mock('@/render/CompletionBurst', () => ({ CompletionBurst: () => null }));
 // Real persistence, backed by an in-memory node:sqlite database per test file.
+// The player has skipped the tutorial, so levels 1-1…1-4 are open (1-5+ stay locked).
 jest.mock('@/storage/expoDatabase', () => {
   const { openNodeDatabase } = jest.requireActual('../../../test/sqlite/nodeDatabase');
+  const { migrate } = jest.requireActual('@/storage/migrations');
+  const { saveSettings } = jest.requireActual('@/storage/repositories');
+  const { DEFAULT_SETTINGS } = jest.requireActual('@/state/settingsStore');
   const db = openNodeDatabase();
-  return { openExpoDatabase: async () => db };
+  let seeded: Promise<void> | null = null;
+  return {
+    openExpoDatabase: async () => {
+      seeded ??= migrate(db).then(() => saveSettings(db, { ...DEFAULT_SETTINGS, tutorial: 'skipped' }));
+      await seeded;
+      return db;
+    },
+  };
 });
 
 // One AppState spy for the whole file, so unmount cleanup always has a subscription.
@@ -134,6 +145,24 @@ describe('gameplay flow', () => {
     await screen.findByText(level.title);
     expect(useGame.getState().resumed).toBe(true);
     expect(useGame.getState().game!.moves).toBe(2);
+  });
+
+  it('offers three free hints, then disables the button', async () => {
+    await openLevel();
+    const hint = () => screen.getByTestId('hint');
+    expect(hint().props.accessibilityLabel).toBe('Hint · 3');
+    await fireEvent.press(hint());
+    expect(useGame.getState().game!.hintsUsed).toBe(1);
+    await fireEvent.press(hint());
+    await fireEvent.press(hint());
+    expect(hint().props.accessibilityLabel).toBe('Hint · 0');
+    expect(hint().props.accessibilityState.disabled).toBe(true);
+  });
+
+  it('blocks a locked level opened by deep link', async () => {
+    await renderRouter(APP_DIR, { initialUrl: '/play/ch1-09' });
+    expect(await screen.findByText('Level locked')).toBeTruthy();
+    expect(useGame.getState().game).toBeNull();
   });
 
   it('shows a recoverable screen for an unknown level id', async () => {

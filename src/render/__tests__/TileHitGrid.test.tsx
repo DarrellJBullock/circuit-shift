@@ -118,3 +118,12 @@ describe('describeChange', () => {
     expect(describeChange(g0.evaluation, g0.evaluation)).toBeNull();
   });
 });
+
+describe('compatible receivers', () => {
+  it('are described as accepting either colour', () => {
+    const b = puzzle(['S1v R3']).board;
+    expect(describeTile(b.tiles[1]!, { x: 1, y: 0, color: null, shorted: false, accepts: ['cyan', 'violet'] })).toContain(
+      'Accepts cyan or violet.',
+    );
+  });
+});

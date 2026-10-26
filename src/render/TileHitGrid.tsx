@@ -77,6 +77,7 @@ function TileHitGridImpl({ tiles, width, cell, evaluation, disabled, onPress }: 
   }, []);
 
   const satisfied = new Set(evaluation.objectives.filter((o) => o.satisfied).map((o) => o.index));
+  const acceptsOf = new Map(evaluation.objectives.map((o) => [o.index, o.accepts] as const));
   const { power } = evaluation;
 
   return (
@@ -99,6 +100,7 @@ function TileHitGridImpl({ tiles, width, cell, evaluation, disabled, onPress }: 
           color: power.colorOf[i] ?? null,
           shorted: power.shortedOf[i] ?? false,
           satisfied: satisfied.has(i),
+          accepts: acceptsOf.get(i),
         });
         return (
           <View

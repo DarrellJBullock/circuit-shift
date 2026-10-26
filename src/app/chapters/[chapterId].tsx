@@ -1,15 +1,17 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { isChapterUnlocked, isLevelUnlocked } from '@/levels/progression';
 import { getChapter, levelsInChapter } from '@/levels/registry';
-import { useProgress } from '@/state/progressStore';
+import { useProgression } from '@/levels/useProgression';
 import { Screen } from '@/ui/Screen';
 import { MIN_TOUCH, colors, fontScale, radius, spacing, type } from '@/ui/theme';
 
 export default function LevelSelect() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
   const chapter = getChapter(chapterId ?? '');
-  const results = useProgress((s) => s.results);
+  const progression = useProgression();
+  const { results } = progression;
 
   if (!chapter) {
     return (
@@ -19,16 +21,22 @@ export default function LevelSelect() {
     );
   }
 
+  if (!isChapterUnlocked(progression, chapter.id)) {
+    return (
+      <Screen title={chapter.title} back>
+        <Text style={type.body}>This chapter is locked. Complete more of the previous chapter to open it.</Text>
+      </Screen>
+    );
+  }
+
   const levels = levelsInChapter(chapter.id);
   return (
     <Screen title={chapter.title} back scroll>
       <Text style={[type.caption, styles.sub]}>{chapter.subtitle}</Text>
       <View style={styles.grid}>
-        {levels.map((level, i) => {
+        {levels.map((level) => {
           const result = results[level.id];
-          // A level unlocks when it is first or the previous one is complete.
-          const prev = levels[i - 1];
-          const unlocked = i === 0 || (prev ? results[prev.id]?.completed === true : false);
+          const unlocked = isLevelUnlocked(progression, level);
           const stars = result?.bestStars ?? 0;
           return (
             <Pressable
@@ -60,7 +68,7 @@ export default function LevelSelect() {
 
 const styles = StyleSheet.create({
   sub: { marginBottom: spacing.md },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },
   cell: {
     width: 72,
     height: 72,

@@ -5,7 +5,8 @@ import type {
   Tile,
 } from '@/engine';
 
-export type ChapterId = 'ch1' | 'ch2' | 'ch3';
+/** Campaign chapters, plus 'daily' for generated daily challenges (not listed as a chapter). */
+export type ChapterId = 'ch1' | 'ch2' | 'ch3' | 'daily';
 
 /** Difficulty 1 (introductory) … 10 (hardest in the MVP). */
 export type Difficulty = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;

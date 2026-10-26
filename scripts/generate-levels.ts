@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { generatePuzzle } from '../src/engine';
 import { levelFromGenerated } from '../src/levels/fromGenerated';
-import { CHAPTER1_PLAN, type LevelPlan } from '../src/levels/plans';
+import { CHAPTER1_PLAN, CHAPTER2_PLAN, CHAPTER3_PLAN, type LevelPlan } from '../src/levels/plans';
 import type { Level } from '../src/levels/schema';
 
 const OUT_DIR = join(__dirname, '..', 'src', 'levels', 'data');
@@ -30,7 +30,11 @@ function build(plans: readonly LevelPlan[]): Level[] {
   });
 }
 
-const chapters: [string, readonly LevelPlan[]][] = [['ch1', CHAPTER1_PLAN]];
+const chapters: [string, readonly LevelPlan[]][] = [
+  ['ch1', CHAPTER1_PLAN],
+  ['ch2', CHAPTER2_PLAN],
+  ['ch3', CHAPTER3_PLAN],
+];
 for (const [id, plans] of chapters) {
   const levels = build(plans);
   const file = join(OUT_DIR, `${id}.generated.json`);

@@ -22,6 +22,7 @@ export const useSharedValue = <T>(v: T): { value: T } => ({ value: v });
 export const useDerivedValue = <T>(fn: () => T): { value: T } => ({ value: fn() });
 export const withTiming = identity;
 export const withDelay = (_ms: number, v: unknown): unknown => v;
+export const withSequence = (...steps: unknown[]): unknown => steps[steps.length - 1];
 export const Easing = { out: identity, cubic: identity, linear: identity };
 export const FadeIn = layoutAnim;
 export const FadeOut = layoutAnim;

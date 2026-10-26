@@ -29,6 +29,12 @@ export interface GeneratorSpec {
   readonly minCrosses?: number;
   /** Fraction of wire tiles locked in their solved orientation (free hints). */
   readonly lockedRate: number;
+  /**
+   * Fraction of receivers that accept every colour on the board ("compatible"
+   * receivers). Only consumes randomness when > 0 and there are several
+   * colours, so existing specs generate identically.
+   */
+  readonly anyReceiverRate?: number;
   readonly minReceivers: number;
   readonly maxReceivers: number;
   readonly minMoves: number;
@@ -134,6 +140,9 @@ function growLayout(spec: GeneratorSpec, rng: Rng): Layout | string {
     }
   }
   if (placed < Math.min(target, spec.networks.length * 3)) return 'networks too small';
+  // Every requested network must exist: a source that never grew would
+  // silently become an empty cell.
+  if (members.some((m) => m.length < 2)) return 'isolated source';
   return { blocked, masks, owner, sources };
 }
 
@@ -218,10 +227,17 @@ export function generatePuzzle(spec: GeneratorSpec): GenerateResult {
       reject('receiver count');
       continue;
     }
-    const tiles = scramble(built.tiles, rng);
+    let tiles = scramble(built.tiles, rng);
+    const palette = [...new Set(spec.networks)].sort();
+    const anyIds = new Set<string>();
+    if ((spec.anyReceiverRate ?? 0) > 0 && palette.length > 1) {
+      for (const t of tiles) if (t.type === 'receiver' && rng.next() < spec.anyReceiverRate!) anyIds.add(t.id);
+      // Compatible receivers are neutral: no colour of their own.
+      tiles = tiles.map((t) => (anyIds.has(t.id) ? { id: t.id, type: t.type, baseMask: t.baseMask, rotation: t.rotation, locked: t.locked } : t));
+    }
     const objectives: ReceiverObjective[] = tiles
       .filter((t) => t.type === 'receiver')
-      .map((t) => ({ receiverId: t.id, accepts: [t.meta?.color ?? 'cyan'] }));
+      .map((t) => ({ receiverId: t.id, accepts: anyIds.has(t.id) ? palette : [t.meta?.color ?? 'cyan'] }));
     const puzzle: Puzzle = { board: { width: spec.width, height: spec.height, tiles }, objectives, constraints: STRICT };
 
     const result: SearchResult = solveAuto(puzzle, puzzle.board, limits);

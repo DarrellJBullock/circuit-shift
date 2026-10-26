@@ -49,6 +49,7 @@ export const motion = {
   /** Time for a flow pulse to travel one cell. */
   flowCellMs: 650,
   burstMs: 1100,
+  hintHoldMs: 1100,
 } as const;
 
 /**

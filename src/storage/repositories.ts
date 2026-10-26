@@ -1,6 +1,6 @@
 import type { GameSnapshot, Stars } from '@/engine';
 import type { LevelResult } from '@/state/progressStore';
-import { DEFAULT_SETTINGS, type MotionPreference, type Settings } from '@/state/settingsStore';
+import { DEFAULT_SETTINGS, type MotionPreference, type Settings, type TutorialState } from '@/state/settingsStore';
 
 import type { SqlDatabase } from './sql';
 
@@ -63,9 +63,65 @@ export async function saveLevelResult(db: SqlDatabase, result: LevelResult, now:
   );
 }
 
+// ---------------------------------------------------------------- daily challenges
+
+interface DailyRow {
+  date: unknown;
+  completed: unknown;
+  best_stars: unknown;
+  best_moves: unknown;
+  best_time_ms: unknown;
+}
+
+/** Daily results keyed by level id (`daily-YYYY-MM-DD`), same shape as campaign results. */
+export async function loadDailyResults(db: SqlDatabase): Promise<Record<string, LevelResult>> {
+  const rows = await db.all<DailyRow>('SELECT date, completed, best_stars, best_moves, best_time_ms FROM daily_challenges');
+  const out: Record<string, LevelResult> = {};
+  for (const r of rows) {
+    if (typeof r.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.date)) continue;
+    const levelId = `daily-${r.date}`;
+    out[levelId] = {
+      levelId,
+      completed: r.completed === 1,
+      bestStars: asStars(r.best_stars),
+      bestMoves: asNullableInt(r.best_moves),
+      bestTimeMs: asNullableInt(r.best_time_ms),
+    };
+  }
+  return out;
+}
+
+/** Records the generator version and seed with the result, so history stays auditable. */
+export async function saveDailyResult(
+  db: SqlDatabase,
+  date: string,
+  generatorVersion: string,
+  seed: number,
+  result: LevelResult,
+  now: number,
+): Promise<void> {
+  await db.run(
+    `INSERT INTO daily_challenges (date, generator_version, seed, completed, best_stars, best_moves, best_time_ms, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(date) DO UPDATE SET completed = excluded.completed, best_stars = excluded.best_stars,
+       best_moves = excluded.best_moves, best_time_ms = excluded.best_time_ms, updated_at = excluded.updated_at`,
+    [
+      date,
+      generatorVersion,
+      seed,
+      result.completed ? 1 : 0,
+      result.bestStars,
+      result.bestMoves,
+      result.bestTimeMs === null ? null : Math.round(result.bestTimeMs),
+      now,
+    ],
+  );
+}
+
 // ---------------------------------------------------------------- settings
 
 const MOTION: readonly MotionPreference[] = ['system', 'reduced', 'full'];
+const TUTORIAL: readonly TutorialState[] = ['pending', 'done', 'skipped'];
 
 export async function loadSettings(db: SqlDatabase): Promise<Settings> {
   const rows = await db.all<{ key: unknown; value: unknown }>('SELECT key, value FROM settings');
@@ -74,11 +130,15 @@ export async function loadSettings(db: SqlDatabase): Promise<Settings> {
     const v = map.get(key);
     return v === 'true' ? true : v === 'false' ? false : fallback;
   };
-  const motion = map.get('motion');
+  const pick = <T extends string>(key: keyof Settings, allowed: readonly T[], fallback: T): T => {
+    const v = map.get(key);
+    return allowed.includes(v as T) ? (v as T) : fallback;
+  };
   return {
     hapticsEnabled: bool('hapticsEnabled', DEFAULT_SETTINGS.hapticsEnabled),
     soundEnabled: bool('soundEnabled', DEFAULT_SETTINGS.soundEnabled),
-    motion: MOTION.includes(motion as MotionPreference) ? (motion as MotionPreference) : DEFAULT_SETTINGS.motion,
+    motion: pick('motion', MOTION, DEFAULT_SETTINGS.motion),
+    tutorial: pick('tutorial', TUTORIAL, DEFAULT_SETTINGS.tutorial),
   };
 }
 

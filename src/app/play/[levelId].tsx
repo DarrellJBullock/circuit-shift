@@ -4,15 +4,21 @@ import { AccessibilityInfo, AppState, type LayoutChangeEvent, Pressable, StyleSh
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { isAtStart, isConductive } from '@/engine';
+import { isLevelUnlocked } from '@/levels/progression';
 import { getLevel, nextLevel } from '@/levels/registry';
+import { useProgression } from '@/levels/useProgression';
 import { CompletionOverlay } from '@/play/CompletionOverlay';
 import { PauseOverlay } from '@/play/PauseOverlay';
 import { formatTime, referenceLabel } from '@/play/format';
+import { CoachMark } from '@/play/CoachMark';
+import { hintsRemaining } from '@/play/hintPolicy';
+import { TUTORIAL_FINAL_LEVEL, tilesToGuide, tutorialStepFor } from '@/play/tutorial';
 import { BoardView } from '@/render/BoardView';
 import { describeChange } from '@/render/a11y';
 import { layoutBoard } from '@/render/geometry';
 import { feedback } from '@/services/feedback';
 import { useGame } from '@/state/gameStore';
+import { useSettings } from '@/state/settingsStore';
 import { Button } from '@/ui/Button';
 import { MIN_TOUCH, colors, fontScale, spacing, type } from '@/ui/theme';
 
@@ -24,14 +30,21 @@ export default function Play() {
   const game = useGame((s) => s.game);
   const completion = useGame((s) => s.completion);
   const dispatch = useGame((s) => s.dispatch);
+  const lastHint = useGame((s) => s.lastHint);
+  const tutorial = useSettings((s) => s.tutorial);
   const [area, setArea] = useState({ width: 0, height: 0 });
-  const missing = getLevel(levelId ?? '') === undefined;
+  const progression = useProgression();
+  const requested = getLevel(levelId ?? '');
+  const missing = requested === undefined;
+  // Deep links must respect progression (and, from Phase 6, entitlements).
+  // Once a level is open it stays playable even if the unlock state changes.
+  const locked = !missing && !isLevelUnlocked(progression, requested) && level?.id !== requested.id;
 
   useEffect(() => {
-    if (!levelId || missing) return;
+    if (!levelId || missing || locked) return;
     useGame.getState().start(levelId);
     return () => useGame.getState().clear();
-  }, [levelId, missing]);
+  }, [levelId, missing, locked]);
 
   const status = game?.status;
   useEffect(() => {
@@ -64,16 +77,38 @@ export default function Play() {
     feedback(satisfied(after) > satisfied(before) ? 'connect' : 'rotate');
   }, []);
 
+  // Finishing the last tutorial level completes the tutorial.
+  useEffect(() => {
+    if (completion && level?.id === TUTORIAL_FINAL_LEVEL && useSettings.getState().tutorial === 'pending') {
+      useSettings.getState().update({ tutorial: 'done' });
+    }
+  }, [completion, level]);
+
+  const onHint = useCallback(() => {
+    const before = useGame.getState().game;
+    const index = useGame.getState().requestHint();
+    const after = useGame.getState().game;
+    if (index === null || !before || !after) return;
+    const w = after.board.width;
+    AccessibilityInfo.announceForAccessibility(
+      `Hint: rotated the tile at row ${Math.floor(index / w) + 1}, column ${(index % w) + 1}.`,
+    );
+    const change = describeChange(before.evaluation, after.evaluation, useGame.getState().completion?.stars);
+    if (change) AccessibilityInfo.announceForAccessibility(change);
+    feedback(after.status === 'won' ? 'win' : 'rotate');
+  }, []);
+
   const onLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setArea({ width, height });
   }, []);
 
-  if (missing) {
+  if (missing || locked) {
     return (
       <SafeAreaView style={styles.root}>
         <View style={styles.center}>
-          <Text style={type.heading}>Level not found</Text>
+          <Text style={type.heading}>{missing ? 'Level not found' : 'Level locked'}</Text>
+          {locked ? <Text style={type.caption}>Complete the earlier levels to unlock it.</Text> : null}
           <Button label="Back" variant="secondary" onPress={() => router.back()} />
         </View>
       </SafeAreaView>
@@ -82,9 +117,15 @@ export default function Play() {
   if (!game || !level) return <View style={styles.root} />;
 
   const layout = layoutBoard(level.width, level.height, area.width, area.height);
-  const next = nextLevel(level.id);
+  const step = tutorialStepFor(level.id, tutorial);
+  const guide = step?.guide && game.status === 'playing' ? tilesToGuide(level, game) : undefined;
+  const candidate = nextLevel(level.id);
+  const next = candidate && isLevelUnlocked(progression, candidate) ? candidate : undefined;
+  // dismissTo pops back to the list if it is already in the stack (no duplicate screens).
   const goLevels = () =>
-    router.replace({ pathname: '/chapters/[chapterId]', params: { chapterId: level.chapterId } });
+    level.chapterId === 'daily'
+      ? router.dismissTo('/daily')
+      : router.dismissTo({ pathname: '/chapters/[chapterId]', params: { chapterId: level.chapterId } });
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom', 'left', 'right']}>
@@ -104,10 +145,10 @@ export default function Play() {
         </Pressable>
         <View style={styles.titleBlock}>
           <Text style={styles.levelNo} maxFontSizeMultiplier={fontScale.dense}>
-            {level.chapterId.replace('ch', 'CHAPTER ')} · {level.order}
+            {level.chapterId === 'daily' ? 'DAILY CHALLENGE' : `${level.chapterId.replace('ch', 'CHAPTER ')} · ${level.order}`}
           </Text>
           <Text style={type.heading} numberOfLines={1} maxFontSizeMultiplier={fontScale.dense}>
-            {level.title}
+            {level.title.replace('Daily · ', '')}
           </Text>
         </View>
         <Text style={styles.timer} maxFontSizeMultiplier={fontScale.dense} accessibilityLabel={`Time ${formatTime(game.elapsedMs)}`}>
@@ -123,8 +164,10 @@ export default function Play() {
       </View>
 
       <View testID="board-area" style={styles.boardArea} onLayout={onLayout}>
-        {layout.cell > 0 ? <BoardView game={game} cell={layout.cell} onTilePress={onTilePress} /> : null}
+        {layout.cell > 0 ? <BoardView game={game} cell={layout.cell} onTilePress={onTilePress} hint={lastHint} guide={guide} /> : null}
       </View>
+
+      {step ? <CoachMark step={step} onSkip={() => useSettings.getState().update({ tutorial: 'skipped' })} /> : null}
 
       <View style={styles.toolbar}>
         <Button
@@ -143,6 +186,16 @@ export default function Play() {
           compact
           disabled={game.status !== 'playing' || isAtStart(game)}
           onPress={() => dispatch({ type: 'reset' })}
+          style={styles.flex}
+        />
+        <Button
+          testID="hint"
+          label={`Hint · ${hintsRemaining(game.hintsUsed)}`}
+          variant="secondary"
+          compact
+          disabled={game.status !== 'playing' || hintsRemaining(game.hintsUsed) === 0}
+          accessibilityHint="Rotates one tile toward a solution. Using a hint caps this level at two stars."
+          onPress={onHint}
           style={styles.flex}
         />
       </View>

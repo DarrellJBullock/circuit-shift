@@ -18,6 +18,8 @@ export interface TileA11yState {
   readonly shorted: boolean;
   /** For receivers: whether its objective is met. */
   readonly satisfied?: boolean;
+  /** For receivers: accepted colours (from the level objective). */
+  readonly accepts?: readonly SignalColor[];
 }
 
 /** Spoken description, e.g. "Row 1, column 3. Corner wire, open east and south. Powered cyan." */
@@ -32,7 +34,8 @@ export function describeTile(tile: Tile, s: TileA11yState): string {
   }
   if (tile.type === 'source') parts.push(`Emits ${tile.meta?.color ?? 'cyan'}.`);
   if (tile.type === 'receiver') {
-    parts.push(`Needs ${tile.meta?.color ?? 'cyan'}.`);
+    const accepts = s.accepts ?? [tile.meta?.color ?? 'cyan'];
+    parts.push(accepts.length > 1 ? `Accepts ${accepts.join(' or ')}.` : `Needs ${accepts[0]}.`);
     parts.push(s.satisfied ? 'Satisfied.' : 'Not satisfied.');
   } else if (s.shorted) {
     parts.push('Short circuit: mixed signals.');

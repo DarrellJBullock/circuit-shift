@@ -1,17 +1,21 @@
 import { type GameState, snapshotGame } from '@/engine';
+import { dailyDateOf, isDailyId } from '@/levels/daily';
 import { levelFingerprint } from '@/levels/fingerprint';
+import { getLevel } from '@/levels/registry';
 import type { Level } from '@/levels/schema';
 import { useGame } from '@/state/gameStore';
 import { useProgress } from '@/state/progressStore';
 import { useSession } from '@/state/sessionStore';
-import { type Settings, useSettings } from '@/state/settingsStore';
+import { SETTINGS_KEYS, type Settings, useSettings } from '@/state/settingsStore';
 
 import { migrate } from './migrations';
 import {
   clearSession,
+  loadDailyResults,
   loadProgress,
   loadSession,
   loadSettings,
+  saveDailyResult,
   saveLevelResult,
   saveSession,
   saveSettings,
@@ -47,8 +51,13 @@ export async function initPersistence(db: SqlDatabase, options: PersistenceOptio
   const onError = options.onError ?? ((e) => console.warn('[persistence]', e));
 
   await migrate(db);
-  const [results, settings, saved] = await Promise.all([loadProgress(db), loadSettings(db), loadSession(db)]);
-  useProgress.setState({ results });
+  const [campaign, dailies, settings, saved] = await Promise.all([
+    loadProgress(db),
+    loadDailyResults(db),
+    loadSettings(db),
+    loadSession(db),
+  ]);
+  useProgress.setState({ results: { ...campaign, ...dailies } });
   useSettings.setState(settings);
   useSession.getState().setSaved(saved);
 
@@ -83,21 +92,24 @@ export async function initPersistence(db: SqlDatabase, options: PersistenceOptio
 
   const unsubscribers = [
     useSettings.subscribe((s, prev) => {
-      const pick = (x: Settings): Settings => ({
-        hapticsEnabled: x.hapticsEnabled,
-        soundEnabled: x.soundEnabled,
-        motion: x.motion,
-      });
-      const a = pick(s);
-      const b = pick(prev);
-      if (a.hapticsEnabled !== b.hapticsEnabled || a.soundEnabled !== b.soundEnabled || a.motion !== b.motion) {
-        void enqueue(() => saveSettings(db, a));
+      if (SETTINGS_KEYS.some((k) => s[k] !== prev[k])) {
+        const values = Object.fromEntries(SETTINGS_KEYS.map((k) => [k, s[k]])) as unknown as Settings;
+        void enqueue(() => saveSettings(db, values));
       }
     }),
 
     useProgress.subscribe((s, prev) => {
       for (const [id, result] of Object.entries(s.results)) {
-        if (prev.results[id] !== result) void enqueue(() => saveLevelResult(db, result, now()));
+        if (prev.results[id] === result) continue;
+        if (isDailyId(id)) {
+          const level = getLevel(id);
+          if (level) {
+            const { generatorVersion, seed } = level;
+            void enqueue(() => saveDailyResult(db, dailyDateOf(id), generatorVersion, seed ?? 0, result, now()));
+          }
+        } else {
+          void enqueue(() => saveLevelResult(db, result, now()));
+        }
       }
     }),
 

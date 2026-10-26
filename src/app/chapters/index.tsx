@@ -1,13 +1,15 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { CHAPTER_UNLOCK_THRESHOLD, isChapterUnlocked } from '@/levels/progression';
 import { CHAPTERS, levelsInChapter } from '@/levels/registry';
-import { useProgress } from '@/state/progressStore';
+import { useProgression } from '@/levels/useProgression';
 import { Screen } from '@/ui/Screen';
 import { MIN_TOUCH, colors, radius, spacing, type } from '@/ui/theme';
 
 export default function Chapters() {
-  const results = useProgress((s) => s.results);
+  const progression = useProgression();
+  const { results } = progression;
   return (
     <Screen title="Chapters" back scroll>
       <View style={styles.list}>
@@ -15,7 +17,9 @@ export default function Chapters() {
           const levels = levelsInChapter(ch.id);
           const done = levels.filter((l) => results[l.id]?.completed).length;
           const stars = levels.reduce((s, l) => s + (results[l.id]?.bestStars ?? 0), 0);
-          const available = levels.length > 0;
+          const open = isChapterUnlocked(progression, ch.id);
+          const available = levels.length > 0 && open;
+          const lockedNote = `Locked · complete ${CHAPTER_UNLOCK_THRESHOLD} levels of chapter ${ch.order - 1}`;
           return (
             <Pressable
               key={ch.id}
@@ -23,7 +27,7 @@ export default function Chapters() {
               onPress={() => router.push({ pathname: '/chapters/[chapterId]', params: { chapterId: ch.id } })}
               accessibilityRole="button"
               accessibilityLabel={`Chapter ${ch.order}, ${ch.title}. ${
-                available ? `${done} of ${levels.length} complete, ${stars} stars.` : 'In development.'
+                available ? `${done} of ${levels.length} complete, ${stars} stars.` : `${lockedNote}.`
               }`}
               accessibilityState={{ disabled: !available }}
               style={({ pressed }) => [styles.card, !available && styles.disabled, pressed && styles.pressed]}
@@ -37,7 +41,7 @@ export default function Chapters() {
                 />
               </View>
               <Text style={type.caption}>
-                {available ? `${done}/${levels.length} complete · ★ ${stars}/${levels.length * 3}` : 'In development'}
+                {available ? `${done}/${levels.length} complete · ★ ${stars}/${levels.length * 3}` : lockedNote}
               </Text>
             </Pressable>
           );

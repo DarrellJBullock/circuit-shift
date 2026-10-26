@@ -1,20 +1,22 @@
 import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { isLevelUnlocked, nextPlayableLevel } from '@/levels/progression';
 import { LEVELS, getLevel } from '@/levels/registry';
-import { useProgress } from '@/state/progressStore';
+import { useProgression } from '@/levels/useProgression';
 import { useSession } from '@/state/sessionStore';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { colors, fontScale, spacing, type } from '@/ui/theme';
 
 export default function Home() {
-  const results = useProgress((s) => s.results);
+  const progression = useProgression();
   const saved = useSession((s) => s.saved);
-  // Continue resumes an interrupted level first, otherwise the next unsolved one.
-  const resumable = saved ? getLevel(saved.levelId) : undefined;
-  const next = resumable ?? LEVELS.find((l) => !results[l.id]?.completed) ?? LEVELS[0];
-  const started = resumable !== undefined || Object.keys(results).length > 0;
+  // Continue resumes an interrupted level first, otherwise the next playable one.
+  const savedLevel = saved ? getLevel(saved.levelId) : undefined;
+  const resumable = savedLevel && isLevelUnlocked(progression, savedLevel) ? savedLevel : undefined;
+  const next = resumable ?? nextPlayableLevel(progression) ?? LEVELS[0];
+  const started = resumable !== undefined || Object.keys(progression.results).length > 0;
 
   return (
     <Screen>
@@ -33,6 +35,7 @@ export default function Home() {
             onPress={() => router.push({ pathname: '/play/[levelId]', params: { levelId: next.id } })}
           />
         ) : null}
+        <Button testID="home-daily" label="Daily Challenge" variant="secondary" onPress={() => router.push('/daily')} />
         <Button label="Chapters" variant="secondary" onPress={() => router.push('/chapters')} />
         <Button label="Settings" variant="secondary" onPress={() => router.push('/settings')} />
       </View>

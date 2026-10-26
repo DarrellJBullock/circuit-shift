@@ -127,6 +127,17 @@ queries run against a real engine.
   planned level and fails on any difference.
 - Hand-built levels (tutorials) use the grid notation below.
 
+## Progression, hints, daily, tutorial
+
+- `levels/progression.ts` holds all unlock rules (pure, tested). Every screen and the play route go
+  through it, so a deep link can't open a locked level. Phase 6 adds an entitlement check for
+  premium chapters in the same place.
+- Hints: `play/hintPolicy.ts` (`FREE_HINTS_PER_LEVEL = 3`, interim) and `useGame().requestHint()`.
+- Daily: `levels/daily.ts`. **Never edit an existing entry of `DAILY_GENERATOR_SCHEDULE`**; append a
+  new `{ from, version }` when a new generator ships. Pinned fingerprints in
+  `levels/__tests__/daily.test.ts` guard historical puzzles.
+- Tutorial: `play/tutorial.ts` (steps per level); the state is stored in settings as `tutorial`.
+
 ## Solver
 
 `solve(puzzle, board, limits)` does a layered BFS over **tap counts** per rotatable tile. Taps on

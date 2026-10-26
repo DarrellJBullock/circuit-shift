@@ -14,9 +14,12 @@ export interface BoardViewProps {
   readonly game: GameState;
   readonly cell: number;
   readonly onTilePress: (index: number) => void;
+  readonly hint?: { readonly index: number; readonly nonce: number } | null;
+  /** Tutorial: tiles to ring. */
+  readonly guide?: readonly number[];
 }
 
-export function BoardView({ game, cell, onTilePress }: BoardViewProps) {
+export function BoardView({ game, cell, onTilePress, hint, guide }: BoardViewProps) {
   const clock = useClock();
   const reduceMotion = useReduceMotion();
   const { board, evaluation } = game;
@@ -25,6 +28,10 @@ export function BoardView({ game, cell, onTilePress }: BoardViewProps) {
   const height = board.height * cell;
   const satisfied = useMemo(
     () => new Set(evaluation.objectives.filter((o) => o.satisfied).map((o) => o.index)),
+    [evaluation.objectives],
+  );
+  const acceptsOf = useMemo(
+    () => new Map(evaluation.objectives.map((o) => [o.index, o.accepts] as const)),
     [evaluation.objectives],
   );
   const won = game.status === 'won';
@@ -54,7 +61,10 @@ export function BoardView({ game, cell, onTilePress }: BoardViewProps) {
             shorted={power.shortedOf[i] ?? false}
             depth={power.depthOf[i] ?? 0}
             satisfied={satisfied.has(i)}
+            accepts={acceptsOf.get(i)}
             inPort={inflowPort(board, power, i)}
+            hintNonce={hint?.index === i ? hint.nonce : 0}
+            guided={guide?.includes(i) ?? false}
             clock={clock}
             reduceMotion={reduceMotion}
           />

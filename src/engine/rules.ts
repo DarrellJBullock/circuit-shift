@@ -27,6 +27,7 @@ export type Violation = 'objective' | 'short' | 'openEnds' | 'unpowered';
 export interface ObjectiveStatus {
   readonly receiverId: string;
   readonly index: number;
+  readonly accepts: readonly SignalColor[];
   readonly satisfied: boolean;
   readonly receivedColor: SignalColor | null;
 }
@@ -58,6 +59,7 @@ export function evaluate(
     return {
       receiverId: o.receiverId,
       index,
+      accepts: o.accepts,
       receivedColor,
       satisfied: receivedColor != null && o.accepts.includes(receivedColor),
     };

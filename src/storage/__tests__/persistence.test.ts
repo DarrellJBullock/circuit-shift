@@ -142,3 +142,23 @@ describe('persistence', () => {
     expect((await loadSettings(db)).motion).toBe('reduced');
   });
 });
+
+describe('daily persistence', () => {
+  it('stores daily results with generator version and seed, and reloads them', async () => {
+    const db = openNodeDatabase();
+    const p = await boot(db);
+    const id = 'daily-2026-10-26';
+    useProgress.getState().recordCompletion({ levelId: id, stars: 3, moves: 19, timeMs: 60_000 });
+    await p.idle();
+    const row = await db.first<{ generator_version: string; seed: number; best_stars: number }>(
+      'SELECT generator_version, seed, best_stars FROM daily_challenges WHERE date = ?',
+      ['2026-10-26'],
+    );
+    expect(row).toMatchObject({ generator_version: 'gen-1', best_stars: 3 });
+    expect(row!.seed).toBe(getLevel(id)!.seed);
+    expect(await db.first('SELECT COUNT(*) AS n FROM level_progress')).toEqual({ n: 0 });
+
+    await boot(db);
+    expect(useProgress.getState().results[id]).toMatchObject({ completed: true, bestStars: 3, bestMoves: 19 });
+  });
+});

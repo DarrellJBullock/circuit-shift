@@ -61,10 +61,17 @@ Legend: ✅ done · 🔄 in progress · ⬜ todo · 🔑 needs an external decis
 - 🔑 Display font: pick an OFL-licensed typeface (system font for now)
 
 ## Phase 5: Remaining levels, daily challenge, hints
-- ⬜ Chapters 2 and 3 (40 levels; violet signals in chapter 3)
-- ⬜ Daily challenge: `hashSeed("daily:YYYY-MM-DD:gen-1")` (UTC), stored history, stability test across versions
-- ⬜ Hint UI and economy 🔑 free hints per level vs rewarded ad (balancing decision)
-- ⬜ Tutorial (playable, skippable) using levels 1-1..1-3 with callouts
+- ✅ **60 validated levels.** Chapter 2 "Grid Lock" (2–3 same-colour sources, up to 15 receivers, 7×9) and chapter 3 "Spectrum" (cyan/violet networks; up to 4 sources). Every optimum is proven and every level reproduces from its seed in tests
+- ✅ Compatible receivers (chapter 3): accept either colour; neutral white ring plus diamond-and-dot glyph; VoiceOver says "Accepts cyan or violet"
+- ✅ Generator hardening: rejects layouts where a planned network never grew (a source would silently vanish); a test checks source counts against plans
+- ✅ Progression module: sequential levels; chapter k+1 opens at 15/20 of chapter k; skipping the tutorial opens 1-1…1-4. Level select, chapter cards, Home and the **play route** all enforce it (closes the deep-link gap); "Next level" only shows when that level is unlocked
+- ✅ Hints: the solver works from the current board, an amber flash ring marks the tile, VoiceOver announces it; **3 free per level** (`play/hintPolicy.ts`, interim until rewarded ads); hinted results cap at ★★
+- ✅ Daily challenge: UTC date → `hash("daily:<date>:<version>")`; append-only `DAILY_GENERATOR_SCHEDULE`; weekday difficulty ramp (cyan only); pinned fingerprints for three dates; a full year generates; results stored in `daily_challenges` with generator version and seed; Daily screen with today plus the previous 6 days and a countdown to 00:00 UTC
+- ✅ Tutorial: coach cards on 1-1…1-3, guide rings on tiles still to rotate (1-1, 1-2), Skip (persisted), completes on finishing 1-3; a first-launch test confirms a new player reaches a coached level from Home in one tap
+- ✅ Fix: "Quit to levels" pushed duplicate list screens; now uses `router.dismissTo`
+- ✅ Simulator: daily screen, a daily board ("Optimal 19", matching the pinned test), hint flash and counter, Continue resuming a daily, chapter locks, level select, tutorial card and guide ring
+- ⬜ Balancing pass (Phase 7): move curves dip in places (e.g. 1-12, 2-04, 3-06); review with playtesters
+- ⬜ Analytics hooks for tutorial_start/complete, hint_used, daily_start/complete (Phase 6 typed interface)
 
 ## Phase 6: Purchases, ads, analytics, privacy
 - ⬜ Verify SDK-58 compatibility of `react-native-purchases` and `react-native-google-mobile-ads`

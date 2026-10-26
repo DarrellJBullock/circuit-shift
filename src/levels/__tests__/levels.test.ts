@@ -2,10 +2,18 @@ import { createRng, generatePuzzle, solveAuto } from '@/engine';
 
 import { defineHandcrafted } from '../author';
 import generatedCh1 from '../data/ch1.generated.json';
+import generatedCh2 from '../data/ch2.generated.json';
+import generatedCh3 from '../data/ch3.generated.json';
 import { levelFromGenerated } from '../fromGenerated';
-import { CHAPTER1_PLAN } from '../plans';
+import { CHAPTER1_PLAN, CHAPTER2_PLAN, CHAPTER3_PLAN } from '../plans';
 import { LEVELS, LEVEL_LOAD_ERRORS, RAW_LEVELS, getLevel, nextLevel } from '../registry';
 import { levelToPuzzle, validateLevel } from '../validate';
+
+const PLANNED = [
+  ...CHAPTER1_PLAN.map((p) => [p, generatedCh1] as const),
+  ...CHAPTER2_PLAN.map((p) => [p, generatedCh2] as const),
+  ...CHAPTER3_PLAN.map((p) => [p, generatedCh3] as const),
+];
 
 const sample = RAW_LEVELS.find((l) => l.id === 'ch1-03')!;
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
@@ -37,20 +45,25 @@ describe('shipped levels', () => {
 });
 
 describe('generated level data', () => {
-  it.each(CHAPTER1_PLAN.map((p) => [p.id, p] as const))(
-    '%s is reproduced exactly from its plan and seed',
-    (id, plan) => {
+  it.each(PLANNED.map(([p, data]) => [p.id, p, data] as const))(
+    '%s is reproduced exactly from its plan and seed, with every planned network',
+    (id, plan, data) => {
       const r = generatePuzzle(plan.spec);
       expect(r.ok).toBe(true);
       if (!r.ok) return;
-      const committed = (generatedCh1 as unknown[]).find((l) => (l as { id: string }).id === id);
+      const committed = (data as unknown[]).find((l) => (l as { id: string }).id === id) as { sourceIds: string[] };
       expect(levelFromGenerated(plan, r.puzzle)).toEqual(committed);
+      expect(committed.sourceIds).toHaveLength(plan.spec.networks.length);
     },
   );
 
-  it('chapter 1 ships 20 levels in contiguous order', () => {
-    const ch1 = LEVELS.filter((l) => l.chapterId === 'ch1').map((l) => l.order).sort((a, b) => a - b);
-    expect(ch1).toEqual(Array.from({ length: 20 }, (_, i) => i + 1));
+  it.each(['ch1', 'ch2', 'ch3'] as const)('%s ships 20 levels in contiguous order', (chapterId) => {
+    const orders = LEVELS.filter((l) => l.chapterId === chapterId).map((l) => l.order).sort((a, b) => a - b);
+    expect(orders).toEqual(Array.from({ length: 20 }, (_, i) => i + 1));
+  });
+
+  it('ships 60 validated levels in total', () => {
+    expect(LEVELS).toHaveLength(60);
   });
 });
 

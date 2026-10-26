@@ -16,7 +16,7 @@ import {
 
 import type { ChapterId, Difficulty, Level, ValidationResult } from './schema';
 
-const CHAPTER_IDS: readonly ChapterId[] = ['ch1', 'ch2', 'ch3'];
+const CHAPTER_IDS: readonly ChapterId[] = ['ch1', 'ch2', 'ch3', 'daily'];
 /** Width ≤ 7 keeps every cell ≥ 44pt on a 375pt-wide phone. */
 export const MAX_BOARD_WIDTH = 7;
 export const MAX_BOARD_HEIGHT = 9;
