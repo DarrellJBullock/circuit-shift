@@ -780,7 +780,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 4,
+  "difficulty": 5,
   "optimalMoves": 27,
   "generatorVersion": "gen-1",
   "seed": 203,
@@ -831,39 +831,39 @@
   "height": 6,
   "tiles": [
    {
-    "id": "source-0-0",
-    "type": "source",
+    "id": "elbow-0-0",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 3,
+    "locked": false
+   },
+   {
+    "id": "receiver-1-0",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 3,
+    "locked": true
+   },
+   {
+    "id": "receiver-2-0",
+    "type": "receiver",
     "baseMask": 1,
     "rotation": 2,
     "locked": true
    },
    {
-    "id": "elbow-1-0",
-    "type": "elbow",
-    "baseMask": 3,
+    "id": "empty-3-0",
+    "type": "empty",
+    "baseMask": 0,
     "rotation": 0,
     "locked": false
    },
    {
-    "id": "source-2-0",
-    "type": "source",
-    "baseMask": 1,
-    "rotation": 3,
-    "locked": true
-   },
-   {
-    "id": "elbow-3-0",
-    "type": "elbow",
-    "baseMask": 3,
+    "id": "empty-4-0",
+    "type": "empty",
+    "baseMask": 0,
     "rotation": 0,
     "locked": false
-   },
-   {
-    "id": "receiver-4-0",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 3,
-    "locked": true
    },
    {
     "id": "straight-0-1",
@@ -873,72 +873,72 @@
     "locked": false
    },
    {
-    "id": "tee-1-1",
-    "type": "tee",
-    "baseMask": 7,
-    "rotation": 3,
+    "id": "empty-1-1",
+    "type": "empty",
+    "baseMask": 0,
+    "rotation": 0,
     "locked": false
    },
    {
     "id": "straight-2-1",
     "type": "straight",
     "baseMask": 5,
+    "rotation": 1,
+    "locked": false
+   },
+   {
+    "id": "receiver-3-1",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 1,
+    "locked": true
+   },
+   {
+    "id": "elbow-4-1",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 2,
+    "locked": false
+   },
+   {
+    "id": "tee-0-2",
+    "type": "tee",
+    "baseMask": 7,
     "rotation": 3,
     "locked": false
    },
    {
-    "id": "cross-3-1",
-    "type": "cross",
-    "baseMask": 15,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "receiver-4-1",
+    "id": "receiver-1-2",
     "type": "receiver",
     "baseMask": 1,
     "rotation": 3,
     "locked": true
    },
    {
-    "id": "straight-0-2",
+    "id": "straight-2-2",
     "type": "straight",
     "baseMask": 5,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "straight-1-2",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "blocked-2-2",
-    "type": "blocked",
-    "baseMask": 0,
-    "rotation": 0,
+    "rotation": 2,
     "locked": false
    },
    {
     "id": "elbow-3-2",
     "type": "elbow",
     "baseMask": 3,
-    "rotation": 1,
+    "rotation": 3,
     "locked": false
    },
    {
-    "id": "receiver-4-2",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 3,
-    "locked": true
+    "id": "elbow-4-2",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 2,
+    "locked": false
    },
    {
-    "id": "straight-0-3",
-    "type": "straight",
-    "baseMask": 5,
+    "id": "elbow-0-3",
+    "type": "elbow",
+    "baseMask": 3,
     "rotation": 1,
     "locked": false
    },
@@ -950,32 +950,32 @@
     "locked": false
    },
    {
-    "id": "receiver-2-3",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 3,
-    "locked": true
-   },
-   {
-    "id": "blocked-3-3",
-    "type": "blocked",
-    "baseMask": 0,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "receiver-4-3",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 2,
-    "locked": true
-   },
-   {
-    "id": "elbow-0-4",
+    "id": "elbow-2-3",
     "type": "elbow",
     "baseMask": 3,
     "rotation": 3,
     "locked": false
+   },
+   {
+    "id": "tee-3-3",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "elbow-4-3",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 3,
+    "locked": false
+   },
+   {
+    "id": "receiver-0-4",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 2,
+    "locked": true
    },
    {
     "id": "straight-1-4",
@@ -985,93 +985,93 @@
     "locked": false
    },
    {
-    "id": "elbow-2-4",
+    "id": "source-2-4",
+    "type": "source",
+    "baseMask": 1,
+    "rotation": 2,
+    "locked": true
+   },
+   {
+    "id": "elbow-3-4",
     "type": "elbow",
     "baseMask": 3,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "empty-3-4",
-    "type": "empty",
-    "baseMask": 0,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "straight-4-4",
-    "type": "straight",
-    "baseMask": 5,
     "rotation": 2,
     "locked": false
    },
    {
-    "id": "empty-0-5",
-    "type": "empty",
-    "baseMask": 0,
+    "id": "elbow-4-4",
+    "type": "elbow",
+    "baseMask": 3,
     "rotation": 0,
     "locked": false
    },
    {
-    "id": "empty-1-5",
-    "type": "empty",
-    "baseMask": 0,
+    "id": "elbow-0-5",
+    "type": "elbow",
+    "baseMask": 3,
     "rotation": 0,
+    "locked": true
+   },
+   {
+    "id": "tee-1-5",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 2,
     "locked": false
    },
    {
     "id": "elbow-2-5",
     "type": "elbow",
     "baseMask": 3,
-    "rotation": 3,
+    "rotation": 2,
     "locked": false
    },
    {
-    "id": "straight-3-5",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 3,
-    "locked": false
+    "id": "source-3-5",
+    "type": "source",
+    "baseMask": 1,
+    "rotation": 0,
+    "locked": true
    },
    {
-    "id": "elbow-4-5",
-    "type": "elbow",
-    "baseMask": 3,
+    "id": "blocked-4-5",
+    "type": "blocked",
+    "baseMask": 0,
     "rotation": 0,
     "locked": false
    }
   ],
   "sourceIds": [
-   "source-0-0",
-   "source-2-0"
+   "source-2-4",
+   "source-3-5"
   ],
   "receiverObjectives": [
    {
-    "receiverId": "receiver-4-0",
+    "receiverId": "receiver-1-0",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-4-1",
+    "receiverId": "receiver-2-0",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-4-2",
+    "receiverId": "receiver-3-1",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-2-3",
+    "receiverId": "receiver-1-2",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-4-3",
+    "receiverId": "receiver-0-4",
     "accepts": [
      "cyan"
     ]
@@ -1082,43 +1082,43 @@
    "allTilesPowered": true
   },
   "difficulty": 5,
-  "optimalMoves": 17,
+  "optimalMoves": 29,
   "generatorVersion": "gen-1",
-  "seed": 204,
+  "seed": 209662,
   "solutionMetadata": {
    "rotations": [
+    1,
+    3,
+    2,
+    0,
+    0,
+    0,
+    0,
+    2,
+    1,
+    2,
+    0,
+    3,
     2,
     1,
     3,
+    0,
+    2,
+    0,
+    3,
+    2,
+    2,
+    2,
+    2,
     1,
     3,
     0,
-    0,
+    3,
     3,
     0,
-    3,
-    0,
-    2,
-    0,
-    0,
-    3,
-    2,
-    0,
-    3,
-    0,
-    2,
-    0,
-    3,
-    2,
-    0,
-    2,
-    0,
-    0,
-    0,
-    3,
-    3
+    0
    ],
-   "parMoves": 17,
+   "parMoves": 29,
    "optimality": "proven",
    "solverVersion": "dfs-bb-1"
   }
@@ -1493,295 +1493,301 @@
   "height": 6,
   "tiles": [
    {
-    "id": "elbow-0-0",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "tee-1-0",
-    "type": "tee",
-    "baseMask": 7,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "straight-2-0",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": true
-   },
-   {
-    "id": "straight-3-0",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "straight-4-0",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "elbow-5-0",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 2,
-    "locked": false
-   },
-   {
-    "id": "receiver-0-1",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 0,
-    "locked": true
-   },
-   {
-    "id": "source-1-1",
-    "type": "source",
-    "baseMask": 1,
-    "rotation": 0,
-    "locked": true
-   },
-   {
-    "id": "elbow-2-1",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "tee-3-1",
-    "type": "tee",
-    "baseMask": 7,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "elbow-4-1",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 2,
-    "locked": true
-   },
-   {
-    "id": "straight-5-1",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "elbow-0-2",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "tee-1-2",
-    "type": "tee",
-    "baseMask": 7,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "tee-2-2",
-    "type": "tee",
-    "baseMask": 7,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "source-3-2",
-    "type": "source",
-    "baseMask": 1,
-    "rotation": 0,
-    "locked": true
-   },
-   {
-    "id": "straight-4-2",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "straight-5-2",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "straight-0-3",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "receiver-1-3",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 0,
-    "locked": true
-   },
-   {
-    "id": "straight-2-3",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "receiver-3-3",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 1,
-    "locked": true
-   },
-   {
-    "id": "elbow-4-3",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 2,
-    "locked": false
-   },
-   {
-    "id": "straight-5-3",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "receiver-0-4",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 0,
-    "locked": true
-   },
-   {
-    "id": "empty-1-4",
-    "type": "empty",
-    "baseMask": 0,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "elbow-2-4",
-    "type": "elbow",
-    "baseMask": 3,
-    "rotation": 3,
-    "locked": false
-   },
-   {
-    "id": "straight-3-4",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "receiver-4-4",
-    "type": "receiver",
-    "baseMask": 1,
-    "rotation": 3,
-    "locked": true
-   },
-   {
-    "id": "straight-5-4",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
-    "locked": false
-   },
-   {
-    "id": "empty-0-5",
-    "type": "empty",
-    "baseMask": 0,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "empty-1-5",
-    "type": "empty",
-    "baseMask": 0,
-    "rotation": 0,
-    "locked": false
-   },
-   {
-    "id": "blocked-2-5",
+    "id": "blocked-0-0",
     "type": "blocked",
     "baseMask": 0,
     "rotation": 0,
     "locked": false
    },
    {
-    "id": "receiver-3-5",
+    "id": "receiver-1-0",
     "type": "receiver",
+    "baseMask": 1,
+    "rotation": 2,
+    "locked": true
+   },
+   {
+    "id": "empty-2-0",
+    "type": "empty",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "empty-3-0",
+    "type": "empty",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "receiver-4-0",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 2,
+    "locked": true
+   },
+   {
+    "id": "blocked-5-0",
+    "type": "blocked",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "elbow-0-1",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 2,
+    "locked": false
+   },
+   {
+    "id": "elbow-1-1",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 3,
+    "locked": true
+   },
+   {
+    "id": "empty-2-1",
+    "type": "empty",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "elbow-3-1",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 3,
+    "locked": false
+   },
+   {
+    "id": "tee-4-1",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 2,
+    "locked": false
+   },
+   {
+    "id": "elbow-5-1",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "straight-0-2",
+    "type": "straight",
+    "baseMask": 5,
+    "rotation": 3,
+    "locked": false
+   },
+   {
+    "id": "blocked-1-2",
+    "type": "blocked",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "blocked-2-2",
+    "type": "blocked",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "receiver-3-2",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 0,
+    "locked": true
+   },
+   {
+    "id": "elbow-4-2",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 1,
+    "locked": false
+   },
+   {
+    "id": "elbow-5-2",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "tee-0-3",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "straight-1-3",
+    "type": "straight",
+    "baseMask": 5,
+    "rotation": 2,
+    "locked": false
+   },
+   {
+    "id": "receiver-2-3",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 3,
+    "locked": true
+   },
+   {
+    "id": "blocked-3-3",
+    "type": "blocked",
+    "baseMask": 0,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "elbow-4-3",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 1,
+    "locked": false
+   },
+   {
+    "id": "elbow-5-3",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 1,
+    "locked": false
+   },
+   {
+    "id": "elbow-0-4",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 1,
+    "locked": false
+   },
+   {
+    "id": "tee-1-4",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 3,
+    "locked": false
+   },
+   {
+    "id": "straight-2-4",
+    "type": "straight",
+    "baseMask": 5,
+    "rotation": 3,
+    "locked": false
+   },
+   {
+    "id": "receiver-3-4",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 3,
+    "locked": true
+   },
+   {
+    "id": "elbow-4-4",
+    "type": "elbow",
+    "baseMask": 3,
+    "rotation": 2,
+    "locked": false
+   },
+   {
+    "id": "tee-5-4",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 0,
+    "locked": false
+   },
+   {
+    "id": "source-0-5",
+    "type": "source",
     "baseMask": 1,
     "rotation": 1,
     "locked": true
    },
    {
-    "id": "straight-4-5",
-    "type": "straight",
-    "baseMask": 5,
-    "rotation": 1,
+    "id": "tee-1-5",
+    "type": "tee",
+    "baseMask": 7,
+    "rotation": 2,
     "locked": false
    },
    {
-    "id": "elbow-5-5",
-    "type": "elbow",
-    "baseMask": 3,
+    "id": "receiver-2-5",
+    "type": "receiver",
+    "baseMask": 1,
     "rotation": 3,
+    "locked": true
+   },
+   {
+    "id": "blocked-3-5",
+    "type": "blocked",
+    "baseMask": 0,
+    "rotation": 0,
     "locked": false
+   },
+   {
+    "id": "source-4-5",
+    "type": "source",
+    "baseMask": 1,
+    "rotation": 0,
+    "locked": true
+   },
+   {
+    "id": "receiver-5-5",
+    "type": "receiver",
+    "baseMask": 1,
+    "rotation": 0,
+    "locked": true
    }
   ],
   "sourceIds": [
-   "source-1-1",
-   "source-3-2"
+   "source-0-5",
+   "source-4-5"
   ],
   "receiverObjectives": [
    {
-    "receiverId": "receiver-0-1",
+    "receiverId": "receiver-1-0",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-1-3",
+    "receiverId": "receiver-4-0",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-3-3",
+    "receiverId": "receiver-3-2",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-0-4",
+    "receiverId": "receiver-2-3",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-4-4",
+    "receiverId": "receiver-3-4",
     "accepts": [
      "cyan"
     ]
    },
    {
-    "receiverId": "receiver-3-5",
+    "receiverId": "receiver-2-5",
+    "accepts": [
+     "cyan"
+    ]
+   },
+   {
+    "receiverId": "receiver-5-5",
     "accepts": [
      "cyan"
     ]
@@ -1792,31 +1798,19 @@
    "allTilesPowered": true
   },
   "difficulty": 5,
-  "optimalMoves": 20,
+  "optimalMoves": 28,
   "generatorVersion": "gen-1",
-  "seed": 206,
+  "seed": 104935,
   "solutionMetadata": {
    "rotations": [
-    1,
-    1,
-    1,
-    1,
-    1,
+    0,
     2,
     0,
     0,
-    1,
-    1,
-    2,
-    2,
-    1,
-    1,
     2,
     0,
-    0,
-    0,
-    0,
-    0,
+    1,
+    3,
     0,
     1,
     3,
@@ -1824,17 +1818,29 @@
     0,
     0,
     0,
+    0,
     1,
     3,
+    0,
+    3,
+    3,
+    0,
+    0,
     2,
     0,
+    1,
+    3,
+    3,
+    1,
+    2,
+    1,
+    3,
+    3,
     0,
     0,
-    1,
-    1,
-    3
+    0
    ],
-   "parMoves": 20,
+   "parMoves": 28,
    "optimality": "proven",
    "solverVersion": "dfs-bb-1"
   }
@@ -2609,7 +2615,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 6,
+  "difficulty": 5,
   "optimalMoves": 27,
   "generatorVersion": "gen-1",
   "seed": 208,
@@ -3501,7 +3507,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 7,
+  "difficulty": 6,
   "optimalMoves": 31,
   "generatorVersion": "gen-1",
   "seed": 210,
@@ -3972,7 +3978,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 7,
+  "difficulty": 6,
   "optimalMoves": 29,
   "generatorVersion": "gen-1",
   "seed": 211,
@@ -6624,7 +6630,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 8,
+  "difficulty": 7,
   "optimalMoves": 36,
   "generatorVersion": "gen-1",
   "seed": 216,
@@ -7838,7 +7844,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 9,
+  "difficulty": 8,
   "optimalMoves": 41,
   "generatorVersion": "gen-1",
   "seed": 218,
@@ -9047,7 +9053,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 10,
+  "difficulty": 9,
   "optimalMoves": 43,
   "generatorVersion": "gen-1",
   "seed": 220,

@@ -18,7 +18,10 @@ const layoutAnim: { duration: () => unknown; delay: () => unknown } = {
 };
 
 export const useReducedMotion = (): boolean => false;
-export const useSharedValue = <T>(v: T): { value: T } => ({ value: v });
+export const useSharedValue = <T>(v: T): { value: T; set: (n: T) => void; get: () => T } => {
+  const sv = { value: v, set: (n: T) => { sv.value = n; }, get: () => sv.value };
+  return sv;
+};
 export const useDerivedValue = <T>(fn: () => T): { value: T } => ({ value: fn() });
 export const withTiming = identity;
 export const withDelay = (_ms: number, v: unknown): unknown => v;
@@ -29,6 +32,7 @@ export const FadeOut = layoutAnim;
 export { View };
 
 export const createAnimatedComponent = identity;
+export const useFrameCallback = (): { setActive: (a: boolean) => void } => ({ setActive: () => undefined });
 // react-native-gesture-handler reads default.createAnimatedComponent.
 const Animated = { View, call: () => undefined, createAnimatedComponent };
 export default Animated;

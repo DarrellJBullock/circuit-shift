@@ -7,8 +7,7 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { generatePuzzle } from '../src/engine';
-import { levelFromGenerated } from '../src/levels/fromGenerated';
+import { generatePlannedLevel } from '../src/levels/fromGenerated';
 import { CHAPTER1_PLAN, CHAPTER2_PLAN, CHAPTER3_PLAN, type LevelPlan } from '../src/levels/plans';
 import type { Level } from '../src/levels/schema';
 
@@ -17,16 +16,16 @@ const OUT_DIR = join(__dirname, '..', 'src', 'levels', 'data');
 function build(plans: readonly LevelPlan[]): Level[] {
   return plans.map((p) => {
     const t0 = Date.now();
-    const r = generatePuzzle(p.spec);
+    const r = generatePlannedLevel(p);
     if (!r.ok) {
-      console.error(`✖ ${p.id} ${p.title}: ${r.reason}`, r.rejections);
+      console.error(`✖ ${p.id} ${p.title}: ${r.reason}`);
       process.exit(1);
     }
-    const g = r.puzzle;
+    const l = r.level;
     console.log(
-      `✔ ${p.id} ${p.title.padEnd(14)} ${g.width}x${g.height} receivers=${g.receivers} moves=${g.moves} (${g.optimality}) attempt=${g.attempt} ${Date.now() - t0}ms`,
+      `✔ ${p.id} ${p.title.padEnd(14)} ${l.width}x${l.height} moves=${l.optimalMoves ?? l.solutionMetadata.parMoves} difficulty=${l.difficulty} seeds=${r.attempts} ${Date.now() - t0}ms`,
     );
-    return levelFromGenerated(p, g);
+    return l;
   });
 }
 

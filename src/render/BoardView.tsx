@@ -1,4 +1,4 @@
-import { Canvas, useClock } from '@shopify/react-native-skia';
+import { Canvas } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { View } from 'react-native';
 
@@ -8,6 +8,7 @@ import { type BurstOrigin, CompletionBurst } from './CompletionBurst';
 
 import { TileHitGrid } from './TileHitGrid';
 import { TileNode } from './TileNode';
+import { useAnimationClock } from './useAnimationClock';
 import { useReduceMotion } from './useReduceMotion';
 
 export interface BoardViewProps {
@@ -20,8 +21,9 @@ export interface BoardViewProps {
 }
 
 export function BoardView({ game, cell, onTilePress, hint, guide }: BoardViewProps) {
-  const clock = useClock();
   const reduceMotion = useReduceMotion();
+  // Ambient animation only while actually playing with motion enabled.
+  const clock = useAnimationClock(!reduceMotion && game.status === 'playing');
   const { board, evaluation } = game;
   const { power } = evaluation;
   const width = board.width * cell;

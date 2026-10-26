@@ -1,10 +1,10 @@
-import { createRng, generatePuzzle, solveAuto } from '@/engine';
+import { createRng, solveAuto } from '@/engine';
 
 import { defineHandcrafted } from '../author';
 import generatedCh1 from '../data/ch1.generated.json';
 import generatedCh2 from '../data/ch2.generated.json';
 import generatedCh3 from '../data/ch3.generated.json';
-import { levelFromGenerated } from '../fromGenerated';
+import { generatePlannedLevel } from '../fromGenerated';
 import { CHAPTER1_PLAN, CHAPTER2_PLAN, CHAPTER3_PLAN } from '../plans';
 import { LEVELS, LEVEL_LOAD_ERRORS, RAW_LEVELS, getLevel, nextLevel } from '../registry';
 import { levelToPuzzle, validateLevel } from '../validate';
@@ -48,11 +48,11 @@ describe('generated level data', () => {
   it.each(PLANNED.map(([p, data]) => [p.id, p, data] as const))(
     '%s is reproduced exactly from its plan and seed, with every planned network',
     (id, plan, data) => {
-      const r = generatePuzzle(plan.spec);
+      const r = generatePlannedLevel(plan);
       expect(r.ok).toBe(true);
       if (!r.ok) return;
       const committed = (data as unknown[]).find((l) => (l as { id: string }).id === id) as { sourceIds: string[] };
-      expect(levelFromGenerated(plan, r.puzzle)).toEqual(committed);
+      expect(r.level).toEqual(committed);
       expect(committed.sourceIds).toHaveLength(plan.spec.networks.length);
     },
   );

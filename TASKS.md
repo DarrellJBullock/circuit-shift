@@ -91,10 +91,19 @@ Legend: ✅ done · 🔄 in progress · ⬜ todo · 🔑 needs an external decis
 - 🔑 Analytics vendor (or none); privacy policy text must match the choice
 - 🔑 Product decisions to confirm: "Remove Ads" = unlimited hints without ads (there are no other ads); prices
 
-## Phase 7–8: TestFlight, balancing, release
-- ⬜ EAS project, `eas.json` profiles 🔑 Apple Developer team
-- ⬜ App Store assets from real screenshots; privacy nutrition label
-- 🔑 Privacy policy URL and support URL (placeholders are clearly marked in Settings)
+## Phase 7: TestFlight, balancing, regression tests
+- ✅ Balancing tooling: `npm run level-report` (per-level metrics + difficulty score, dip detection). Plans can set `minScore`, and the generator re-seeds deterministically until it is met (the seed used is recorded, so output stays reproducible)
+- ✅ Curve fixed: unintended dips at 2-04, 2-06 and 3-06 removed; the two remaining dips are deliberate (1-4 breather after the tutorial, 1-12 introduces crosses). Difficulty labels (1–10) are now computed from the score instead of hand-entered
+- ✅ Regression suite: **all 60 levels completed through the real game store** at their proven optimum with ★★★; performance budgets (evaluate < 2 ms, move < 4 ms, hint < 100 ms, daily < 150 ms on the largest boards); offline guard (any `fetch`/XHR during a full UI session fails the suite)
+- ✅ Performance: board animation now runs on a pausable clock (`useAnimationClock`) that stops when paused or under reduced motion; previously the board redrew at 60 fps indefinitely. Found and fixed a freeze-after-resume bug in the first version, with a regression test
+- ✅ `eas.json` (development / preview / production; remote app version, auto-incremented build numbers)
+- ✅ Release build compiled and launched on the simulator (ads and store correctly disabled, no dev overlay)
+- ✅ Privacy manifest checked: `NSPrivacyTracking = false`; required-reason APIs declared; RevenueCat and Google SDK manifests bundled
+- ✅ **Replaced Expo template icon and splash** (third-party placeholder art) with original rendered art: `npm run render-brand-assets` (CanvasKit, deterministic; App Store icon has no alpha)
+- ✅ `RELEASE.md`: TestFlight runbook, env vars, privacy-label draft, manual regression checklist
+- 🔑 `eas init` (creates the EAS project under your Expo account) and Apple credentials for `eas build` / `eas submit`
+- ⬜ First TestFlight build plus the manual regression checklist in RELEASE.md §4 on a physical iPhone (including first-move lag and real-device frame rate)
+- 🔑 Final brand art: the generated icon is original and shippable, but Evercrest may want a designer pass
 
 ## Open decisions
 - 🔑 Bundle ID: proposed `com.evercrestinteractive.circuitshift`

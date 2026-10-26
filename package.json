@@ -52,7 +52,9 @@
     "validate-levels": "tsx scripts/validate-levels.ts",
     "check": "npm run typecheck && npm run lint && npm test -- --ci && npm run validate-levels",
     "generate-levels": "tsx scripts/generate-levels.ts",
-    "synthesize-sfx": "tsx scripts/synthesize-sfx.ts"
+    "synthesize-sfx": "tsx scripts/synthesize-sfx.ts",
+    "level-report": "tsx scripts/level-report.ts",
+    "render-brand-assets": "tsx scripts/render-brand-assets.ts"
   },
   "private": true,
   "jest": {

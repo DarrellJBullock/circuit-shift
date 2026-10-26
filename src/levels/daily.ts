@@ -2,7 +2,7 @@ import { GENERATOR_VERSION, type GeneratorSpec, generatePuzzle, hashSeed } from 
 
 import { levelFromGenerated } from './fromGenerated';
 import type { LevelPlan } from './plans';
-import type { Difficulty, Level } from './schema';
+import type { Level } from './schema';
 import { validateLevel } from './validate';
 
 export const DAILY_PREFIX = 'daily-';
@@ -51,14 +51,14 @@ export function generatorVersionFor(date: string): string | null {
 }
 
 /** Weekday ramp (UTC): Monday smallest, weekend largest. Cyan only, so no chapter-3 knowledge is needed. */
-const WEEKDAY: Readonly<Record<number, { size: [number, number]; receivers: [number, number]; moves: [number, number]; networks: 1 | 2; difficulty: Difficulty }>> = {
-  1: { size: [5, 5], receivers: [3, 6], moves: [12, 28], networks: 1, difficulty: 4 },
-  2: { size: [5, 6], receivers: [3, 7], moves: [14, 30], networks: 1, difficulty: 5 },
-  3: { size: [6, 6], receivers: [4, 8], moves: [16, 34], networks: 1, difficulty: 5 },
-  4: { size: [6, 7], receivers: [4, 9], moves: [18, 38], networks: 1, difficulty: 6 },
-  5: { size: [6, 7], receivers: [5, 10], moves: [20, 42], networks: 2, difficulty: 6 },
-  6: { size: [7, 8], receivers: [6, 12], moves: [24, 50], networks: 2, difficulty: 7 },
-  0: { size: [7, 9], receivers: [7, 14], moves: [28, 60], networks: 2, difficulty: 8 },
+const WEEKDAY: Readonly<Record<number, { size: [number, number]; receivers: [number, number]; moves: [number, number]; networks: 1 | 2 }>> = {
+  1: { size: [5, 5], receivers: [3, 6], moves: [12, 28], networks: 1 },
+  2: { size: [5, 6], receivers: [3, 7], moves: [14, 30], networks: 1 },
+  3: { size: [6, 6], receivers: [4, 8], moves: [16, 34], networks: 1 },
+  4: { size: [6, 7], receivers: [4, 9], moves: [18, 38], networks: 1 },
+  5: { size: [6, 7], receivers: [5, 10], moves: [20, 42], networks: 2 },
+  6: { size: [7, 8], receivers: [6, 12], moves: [24, 50], networks: 2 },
+  0: { size: [7, 9], receivers: [7, 14], moves: [28, 60], networks: 2 },
 };
 
 export function dailyPlan(date: string): LevelPlan | null {
@@ -86,7 +86,7 @@ export function dailyPlan(date: string): LevelPlan | null {
   // Formatted by hand: Intl output can differ between Hermes and Node.
   const d = new Date(`${date}T00:00:00Z`);
   const label = `${WEEKDAY_NAMES[day]} ${d.getUTCDate()} ${MONTH_NAMES[d.getUTCMonth()]}`;
-  return { id: dailyLevelId(date), chapterId: 'daily', order: 1, title: `Daily · ${label}`, difficulty: w.difficulty, spec };
+  return { id: dailyLevelId(date), chapterId: 'daily', order: 1, title: `Daily · ${label}`, spec };
 }
 
 const cache = new Map<string, Level | null>();

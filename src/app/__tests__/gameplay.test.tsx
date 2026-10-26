@@ -78,6 +78,22 @@ beforeEach(() => {
   useSession.setState({ saved: null });
 });
 
+// Offline guarantee: any network request during gameplay fails the test.
+const networkCalls: string[] = [];
+beforeAll(() => {
+  (globalThis as { fetch?: unknown }).fetch = jest.fn((url: unknown) => {
+    networkCalls.push(String(url));
+    throw new Error('network access attempted');
+  });
+  (globalThis as { XMLHttpRequest?: unknown }).XMLHttpRequest = jest.fn(() => {
+    networkCalls.push('XMLHttpRequest');
+    throw new Error('network access attempted');
+  });
+});
+afterAll(() => {
+  expect(networkCalls).toEqual([]);
+});
+
 describe('gameplay flow', () => {
   it('goes from Home to a playable level in one tap', async () => {
     await renderRouter(APP_DIR, { initialUrl: '/' });

@@ -1,0 +1,82 @@
+# Release runbook
+
+Status legend: ✅ ready in repo · 🔑 needs Evercrest (account, credential or decision) · ⬜ to do
+
+## 1. One-time setup (🔑, run by an account owner)
+
+These steps create remote resources or need Apple credentials, so they are run by a person, not by
+automation in this repo.
+
+```bash
+eas init                       # links/creates the EAS project; writes extra.eas.projectId to app.json
+eas credentials -p ios         # lets EAS manage the distribution certificate and provisioning profile
+```
+
+App Store Connect:
+- Create the app record for bundle ID `com.evercrestinteractive.circuitshift`.
+- Create the three non-consumable in-app purchases (see DEVELOPMENT.md → Setting up RevenueCat).
+
+EAS environment variables (`eas env:create`), **production** environment:
+
+| Name | Visibility | Notes |
+|---|---|---|
+| `ADMOB_IOS_APP_ID` | plain text | Required: production builds fail without it |
+| `EXPO_PUBLIC_ADMOB_REWARDED_IOS` | plain text | Rewarded unit ID |
+| `EXPO_PUBLIC_REVENUECAT_IOS_KEY` | plain text | RevenueCat **public** SDK key, never a secret key |
+
+Leaving any optional value unset ships that feature disabled, not broken.
+
+## 2. TestFlight build
+
+```bash
+npm run check                                   # typecheck, lint, all tests, level validation
+eas build -p ios --profile production           # remote build; buildNumber auto-increments
+eas submit -p ios --profile production --latest # uploads to App Store Connect → TestFlight
+```
+
+`eas.json` profiles: `development` (dev client, simulator), `preview` (internal distribution),
+`production` (store; `autoIncrement`, `appVersionSource: remote`).
+
+Before inviting testers: walk through the regression checklist (§4) on the TestFlight build.
+
+## 3. App Store privacy ("nutrition label") draft
+
+Based on what the code and the bundled SDK manifests do. **Re-check against the final SDK set and
+Google's and RevenueCat's current disclosures before submitting.**
+
+- **Tracking:** No. Ads are requested non-personalized only, there is no ATT prompt, and the app's
+  privacy manifest declares `NSPrivacyTracking = false`.
+- **Data collected by the app itself:** none. Progress lives in on-device SQLite only.
+- **Third-party SDKs** (declare as the dashboards require; *not linked to identity*, *not used for
+  tracking*):
+  - Google Mobile Ads (only when a player chooses a rewarded ad): device ID, product interaction,
+    advertising data, crash and performance data, coarse location (IP). See Google's disclosure.
+  - RevenueCat (only when the store is configured): purchase history, anonymous app user ID.
+  - Analytics: none unless a vendor is added. Then update this section and the policy.
+- **Privacy policy URL:** 🔑 required. Settings shows it as "REQUIRED CONFIGURATION · NOT YET SET".
+- **Support URL:** 🔑 required.
+
+## 4. Release regression checklist (manual, on the TestFlight build)
+
+Automated coverage runs in `npm run check` (all 60 levels completed through the real store,
+persistence, offline guard, monetization invariants, performance budgets). Also do by hand:
+
+- ⬜ Fresh install: Home → Play reaches a coached level in under 20 s; Skip tutorial works.
+- ⬜ First rotation animates immediately (no lag on the first move; seen once in a debug build).
+- ⬜ Force-quit mid-level → Continue restores board, moves and timer.
+- ⬜ Airplane mode: every screen and level works; Shop shows the store as unavailable.
+- ⬜ VoiceOver: navigate tiles, double-tap rotates, announcements for power, completion and hints.
+- ⬜ Largest accessibility text size: no clipped controls on Home, Play or Settings.
+- ⬜ Reduce Motion (iOS setting): rotations snap, no pulses or burst; gameplay identical.
+- ⬜ Silent switch on: no sound effects. Off: sounds play and mix with music.
+- ⬜ Rewarded ad (with real config): consent form where required; close early → no hint;
+  watch fully → exactly one hint.
+- ⬜ Purchases (sandbox account): buy, kill the app, relaunch → still owned; Restore on a second device.
+- ⬜ Daily challenge rolls over at 00:00 UTC and previous days stay identical.
+
+## 5. App Store listing (Phase 8)
+
+- 🔑 Name/subtitle, description, keywords, category (Games › Puzzle), age rating questionnaire.
+- ⬜ Screenshots: capture from the actual build (`xcrun simctl io <device> screenshot`) at the
+  required 6.9" size; no mock-ups.
+- 🔑 App icon: the current icon is the Expo template placeholder and must be replaced with Evercrest art.

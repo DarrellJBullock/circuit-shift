@@ -52,6 +52,8 @@ npm run test:engine      # engine + level suites only
 npm run validate-levels  # schema + solver validation of every shipped level
 npm run generate-levels  # regenerate planned levels into src/levels/data/*.generated.json
 npm run synthesize-sfx   # regenerate assets/audio/*.wav (original, deterministic)
+npm run render-brand-assets  # regenerate icon/splash/adaptive icons (original, deterministic)
+npm run level-report     # balancing metrics and difficulty-curve dips
 npm run lint             # eslint (type-aware promise rules, engine purity)
 npm run check            # typecheck + lint + tests + level validation
 npm run ios              # expo run:ios (prebuild + pods + build + launch)

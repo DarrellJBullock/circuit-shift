@@ -455,7 +455,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 3,
+  "difficulty": 2,
   "optimalMoves": 9,
   "generatorVersion": "gen-1",
   "seed": 106,
@@ -861,7 +861,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 4,
+  "difficulty": 3,
   "optimalMoves": 16,
   "generatorVersion": "gen-1",
   "seed": 108,
@@ -1104,7 +1104,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 4,
+  "difficulty": 3,
   "optimalMoves": 18,
   "generatorVersion": "gen-1",
   "seed": 109,
@@ -1352,7 +1352,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 5,
+  "difficulty": 3,
   "optimalMoves": 17,
   "generatorVersion": "gen-1",
   "seed": 110,
@@ -1641,7 +1641,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 5,
+  "difficulty": 4,
   "optimalMoves": 21,
   "generatorVersion": "gen-1",
   "seed": 111,
@@ -1935,7 +1935,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 5,
+  "difficulty": 3,
   "optimalMoves": 14,
   "generatorVersion": "gen-1",
   "seed": 112,
@@ -2235,7 +2235,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 6,
+  "difficulty": 4,
   "optimalMoves": 18,
   "generatorVersion": "gen-1",
   "seed": 113,
@@ -2577,7 +2577,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 6,
+  "difficulty": 5,
   "optimalMoves": 27,
   "generatorVersion": "gen-1",
   "seed": 114,
@@ -2931,7 +2931,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 6,
+  "difficulty": 5,
   "optimalMoves": 28,
   "generatorVersion": "gen-1",
   "seed": 115,
@@ -3327,7 +3327,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 7,
+  "difficulty": 6,
   "optimalMoves": 30,
   "generatorVersion": "gen-1",
   "seed": 116,
@@ -3735,7 +3735,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 7,
+  "difficulty": 5,
   "optimalMoves": 25,
   "generatorVersion": "gen-1",
   "seed": 117,
@@ -4192,7 +4192,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 8,
+  "difficulty": 7,
   "optimalMoves": 37,
   "generatorVersion": "gen-1",
   "seed": 118,
@@ -5249,7 +5249,7 @@
    "noOpenEnds": true,
    "allTilesPowered": true
   },
-  "difficulty": 9,
+  "difficulty": 8,
   "optimalMoves": 44,
   "generatorVersion": "gen-1",
   "seed": 120,
