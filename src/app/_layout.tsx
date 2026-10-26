@@ -6,7 +6,9 @@ import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { LEVEL_LOAD_ERRORS } from '@/levels/registry';
+import { initAnalyticsBridge } from '@/services/analytics/bridge';
 import { initAudio } from '@/services/audio';
+import { purchases } from '@/services/purchases';
 import { openExpoDatabase } from '@/storage/expoDatabase';
 import { type Persistence, initPersistence } from '@/storage/persistence';
 import { colors } from '@/ui/theme';
@@ -37,6 +39,11 @@ export default function RootLayout() {
     let persistence: Persistence | null = null;
     let cancelled = false;
     void initAudio();
+    // Store entitlements (no-op when purchases are not configured). Ads are
+    // NOT initialized here: consent is requested only when a player first
+    // chooses to watch a rewarded ad.
+    void purchases.initialize();
+    const stopAnalytics = initAnalyticsBridge();
     void startPersistence().then((p) => {
       persistence = p;
       if (cancelled) p?.dispose();
@@ -48,6 +55,7 @@ export default function RootLayout() {
     });
     return () => {
       cancelled = true;
+      stopAnalytics();
       sub.remove();
       persistence?.dispose();
     };

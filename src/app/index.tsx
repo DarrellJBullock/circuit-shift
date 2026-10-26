@@ -37,7 +37,10 @@ export default function Home() {
         ) : null}
         <Button testID="home-daily" label="Daily Challenge" variant="secondary" onPress={() => router.push('/daily')} />
         <Button label="Chapters" variant="secondary" onPress={() => router.push('/chapters')} />
-        <Button label="Settings" variant="secondary" onPress={() => router.push('/settings')} />
+        <View style={styles.row}>
+          <Button label="Shop" variant="secondary" onPress={() => router.push('/shop')} style={styles.flex} />
+          <Button label="Settings" variant="secondary" onPress={() => router.push('/settings')} style={styles.flex} />
+        </View>
       </View>
     </Screen>
   );
@@ -48,4 +51,6 @@ const styles = StyleSheet.create({
   kicker: { color: colors.source, fontSize: 12, letterSpacing: 3, fontWeight: '700' },
   tagline: { ...type.body, color: colors.textMuted },
   actions: { gap: spacing.md, paddingBottom: spacing.lg },
+  row: { flexDirection: 'row', gap: spacing.md },
+  flex: { flex: 1 },
 });

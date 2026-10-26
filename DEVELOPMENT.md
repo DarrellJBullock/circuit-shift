@@ -127,6 +127,59 @@ queries run against a real engine.
   planned level and fails on any difference.
 - Hand-built levels (tutorials) use the grid notation below.
 
+## Monetization, ads, analytics (Phase 6)
+
+Everything ships **disabled until configured**. Nothing in the client grants a purchase or a reward
+without a store or ad-SDK confirmation.
+
+| Piece | Code | Disabled when |
+|---|---|---|
+| Purchases (RevenueCat) | `services/purchases/` | `EXPO_PUBLIC_REVENUECAT_IOS_KEY` / `_ANDROID_KEY` unset |
+| Rewarded ads (AdMob) | `services/ads/` | release build without `EXPO_PUBLIC_ADMOB_REWARDED_IOS` / `_ANDROID` (dev builds use Google's test unit) |
+| Analytics | `services/analytics/` | always, until a vendor sink is installed **and** the player opts in |
+
+**Invariants (each covered by tests):**
+- Entitlements live only in memory (`state/entitlementStore.ts`). They are filled solely from
+  RevenueCat's verified customer info and never stored in SQLite; the schema has nowhere to put them.
+- Rewarded hints: `rewardFlow.ts` grants only after the SDK's `EARNED_REWARD` callback, and
+  `useGame().requestRewardedHint(outcome)` refuses any outcome other than `rewarded`.
+- Ads are rewarded only (no banners, interstitials or app-open ads), shown only at the player's request,
+  and the game pauses while one is on screen. Requests are non-personalized, so there is no ATT prompt.
+- Consent (Google UMP) is gathered the first time a player asks for an ad, not at launch.
+- Premium chapters (`Chapter.premium`) require the verified `premium_content` entitlement in
+  `levels/progression.ts`.
+
+### Setting up RevenueCat
+1. App Store Connect: create three **non-consumable** products (IDs of your choice).
+2. RevenueCat: create entitlements named exactly **`no_ads`** and **`premium_content`**. Attach
+   remove-ads → `no_ads`, premium chapter → `premium_content`, founder bundle → both.
+3. RevenueCat: in the **current** offering, add packages with identifiers **`remove_ads`**,
+   **`premium_chapter`** and **`founder_bundle`**.
+4. Set `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (the *public* SDK key) in the EAS environment. Never use a
+   secret key in the client.
+
+### Setting up AdMob
+1. Create the app in AdMob and a **rewarded** ad unit.
+2. Set `ADMOB_IOS_APP_ID` (build time; `app.config.ts` **fails production builds without it**) and
+   `EXPO_PUBLIC_ADMOB_REWARDED_IOS`.
+3. AdMob → Privacy & messaging: publish a GDPR (and, if applicable, US state) consent message.
+   Without one, UMP returns "no form(s) configured", and release builds then show no ads (by design).
+4. Development builds use Google's sample app ID and test unit. Because the sample ID has no consent
+   form, a **dev-only** bypass (`devBypassMissingConsentConfig`) lets test ads run so the reward flow
+   can be exercised. It is gated on `__DEV__` and the test unit.
+5. Optional hardening: server-side verification (SSV) of rewards, which needs a backend.
+
+### Analytics
+`services/analytics/events.ts` is the typed catalogue (11 events, no personal data).
+`initAnalyticsBridge()` derives gameplay events from store transitions. To add a vendor, implement
+`AnalyticsSink` and call `setAnalyticsSink()` at startup, then update the privacy policy and App Store
+privacy labels. `EXPO_PUBLIC_ANALYTICS_DEBUG=1` logs events to the console in dev builds.
+
+### Native config gotcha
+After changing config plugins (for example AdMob app IDs), run `npx expo prebuild --platform ios`
+before `expo run:ios`. `run:ios` does not re-run prebuild when `ios/` already exists. Missing this
+caused a `GADInvalidInitializationException` launch crash during Phase 6.
+
 ## Progression, hints, daily, tutorial
 
 - `levels/progression.ts` holds all unlock rules (pure, tested). Every screen and the play route go

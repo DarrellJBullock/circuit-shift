@@ -3,7 +3,7 @@
 A premium, offline-first sci-fi puzzle game by **Evercrest Interactive**. Rotate circuit tiles to route
 power from sources to receivers. iOS first; the architecture is Android-compatible.
 
-> Status: **Phase 5 complete**: 60 validated levels in 3 chapters, a daily challenge, hints and a skippable tutorial, all offline. See [TASKS.md](TASKS.md).
+> Status: **Phase 6 complete**: purchases, rewarded ads and analytics are integrated behind typed adapters, all disabled until configured, on top of 60 levels, daily challenge, hints and tutorial. See [TASKS.md](TASKS.md).
 
 ## Quick start
 
@@ -57,9 +57,10 @@ These are **not configured** and must be supplied by Evercrest Interactive:
 |---|---|---|
 | Privacy policy URL | Settings screen, App Store Connect | **NOT SET** |
 | Support URL | Settings screen, App Store Connect | **NOT SET** |
-| Bundle identifier | `app.json` → `com.evercrestinteractive.circuitshift` (proposed; confirm) | needs confirmation |
+| Bundle identifier | `app.json` → `com.evercrestinteractive.circuitshift` | confirmed |
 | Apple Team / EAS project | `eas init`, `eas.json` | not set up |
-| RevenueCat public SDK key & products | Phase 6 | not set up |
-| AdMob app ID & ad unit IDs | Phase 6 | not set up |
+| RevenueCat public SDK key & products | `EXPO_PUBLIC_REVENUECAT_IOS_KEY` + dashboard (DEVELOPMENT.md) | **not set**: store disabled |
+| AdMob app ID & rewarded unit | `ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_REWARDED_IOS` + consent message | **not set**: dev uses Google test IDs; production builds refuse to build |
+| Analytics vendor | `setAnalyticsSink()` | **none**: nothing is sent |
 
 Purchases and ads ship **disabled** until configured. The app never simulates a purchase or an ad reward.

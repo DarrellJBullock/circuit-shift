@@ -9,6 +9,8 @@ export interface Settings {
   readonly soundEnabled: boolean;
   readonly motion: MotionPreference;
   readonly tutorial: TutorialState;
+  /** Opt-in anonymous usage analytics (off by default). */
+  readonly analyticsEnabled: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -16,6 +18,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundEnabled: true,
   motion: 'system',
   tutorial: 'pending',
+  analyticsEnabled: false,
 };
 
 export const SETTINGS_KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[];

@@ -47,9 +47,9 @@ describe('progress repository', () => {
 describe('settings repository', () => {
   it('returns defaults when empty and round-trips changes', async () => {
     const db = await freshDb();
-    expect(await loadSettings(db)).toEqual({ hapticsEnabled: true, soundEnabled: true, motion: 'system', tutorial: 'pending' });
-    await saveSettings(db, { hapticsEnabled: false, soundEnabled: true, motion: 'reduced', tutorial: 'skipped' });
-    expect(await loadSettings(db)).toEqual({ hapticsEnabled: false, soundEnabled: true, motion: 'reduced', tutorial: 'skipped' });
+    expect(await loadSettings(db)).toEqual({ hapticsEnabled: true, soundEnabled: true, motion: 'system', tutorial: 'pending', analyticsEnabled: false });
+    await saveSettings(db, { hapticsEnabled: false, soundEnabled: true, motion: 'reduced', tutorial: 'skipped', analyticsEnabled: false });
+    expect(await loadSettings(db)).toEqual({ hapticsEnabled: false, soundEnabled: true, motion: 'reduced', tutorial: 'skipped', analyticsEnabled: false });
   });
 
   it('ignores invalid stored values', async () => {

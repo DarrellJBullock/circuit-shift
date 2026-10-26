@@ -1,7 +1,12 @@
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
+import { ads } from '@/services/ads';
+import { analyticsProviderName } from '@/services/analytics/analytics';
+import { purchases } from '@/services/purchases';
 import { type MotionPreference, useSettings } from '@/state/settingsStore';
+import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
 import { MIN_TOUCH, colors, radius, spacing, type } from '@/ui/theme';
 
@@ -12,7 +17,10 @@ const MOTION_OPTIONS: { value: MotionPreference; label: string }[] = [
 ];
 
 export default function Settings() {
-  const { hapticsEnabled, soundEnabled, motion, update } = useSettings();
+  const { hapticsEnabled, soundEnabled, motion, analyticsEnabled, update } = useSettings();
+  const provider = analyticsProviderName();
+  const storeReady = purchases.status().state === 'ready';
+  const adsConfigured = ads.status().state !== 'disabled';
   const version = Constants.expoConfig?.version ?? 'unknown';
 
   return (
@@ -62,9 +70,35 @@ export default function Settings() {
 
       <Section title="Privacy">
         <Text style={type.body}>
-          Circuit Shift works fully offline and needs no account. Progress is stored only on this device.
+          Circuit Shift works fully offline and needs no account. Your progress, settings and daily results are stored
+          only on this device.
         </Text>
-        <Text style={type.body}>This build collects no analytics and shows no ads.</Text>
+        <Row label="Share anonymous usage data">
+          <Switch
+            value={analyticsEnabled}
+            onValueChange={(v) => update({ analyticsEnabled: v })}
+            accessibilityLabel="Share anonymous usage data"
+            trackColor={{ true: colors.electricity, false: colors.tileEdge }}
+          />
+        </Row>
+        <Text style={type.caption}>
+          Off by default. When on, gameplay events (levels started and finished, hints used) are recorded without personal
+          data. {provider === 'none' ? 'No analytics provider is configured in this build, so nothing is sent.' : `Provider: ${provider}.`}
+        </Text>
+        <Text style={type.body}>
+          {adsConfigured
+            ? 'Ads appear only if you choose to watch one for a hint. They are never shown automatically, and they are not personalized. Where required, you are asked for consent before the first ad.'
+            : 'This build shows no ads.'}
+        </Text>
+        {ads.privacyOptionsRequired() ? (
+          <Button label="Ad privacy choices" variant="secondary" compact onPress={() => void ads.showPrivacyOptions()} />
+        ) : null}
+        <Text style={type.body}>
+          {storeReady
+            ? 'Purchases are processed by Apple. Our purchase service (RevenueCat) receives an anonymous app user ID and your purchase receipts in order to verify them.'
+            : 'Purchases are not configured in this build.'}
+        </Text>
+        <Button label="Restore purchases" variant="secondary" compact onPress={() => router.push('/shop')} />
         <View style={styles.config}>
           <Text style={styles.configTitle}>REQUIRED CONFIGURATION · NOT YET SET</Text>
           <Text style={type.caption}>Privacy policy URL — must be published before App Store submission.</Text>

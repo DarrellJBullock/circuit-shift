@@ -2,7 +2,7 @@ import type { LevelResult } from '@/state/progressStore';
 import type { TutorialState } from '@/state/settingsStore';
 
 import { CHAPTERS, LEVELS, getChapter, levelsInChapter } from './registry';
-import type { ChapterId, Level } from './schema';
+import type { Chapter, ChapterId, Level } from './schema';
 
 /** Completed levels needed in chapter k to open chapter k+1 (balancing knob). */
 export const CHAPTER_UNLOCK_THRESHOLD = 15;
@@ -14,6 +14,13 @@ export type { TutorialState };
 export interface ProgressionInput {
   readonly results: Readonly<Record<string, LevelResult>>;
   readonly tutorial: TutorialState;
+  /** Store-verified `premium_content` entitlement (never a local flag). */
+  readonly premium?: boolean;
+}
+
+/** Premium chapters additionally require the verified entitlement. */
+export function premiumGate(chapter: Pick<Chapter, 'premium'>, input: ProgressionInput): boolean {
+  return !chapter.premium || input.premium === true;
 }
 
 const completed = (input: ProgressionInput, id: string) => input.results[id]?.completed === true;
@@ -25,6 +32,7 @@ export function completedInChapter(input: ProgressionInput, chapterId: ChapterId
 export function isChapterUnlocked(input: ProgressionInput, chapterId: ChapterId): boolean {
   const chapter = getChapter(chapterId);
   if (!chapter) return false;
+  if (!premiumGate(chapter, input)) return false;
   if (chapter.order === 1) return true;
   const previous = CHAPTERS.find((c) => c.order === chapter.order - 1);
   if (!previous) return false;

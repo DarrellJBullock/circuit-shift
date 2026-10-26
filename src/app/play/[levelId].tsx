@@ -11,12 +11,14 @@ import { CompletionOverlay } from '@/play/CompletionOverlay';
 import { PauseOverlay } from '@/play/PauseOverlay';
 import { formatTime, referenceLabel } from '@/play/format';
 import { CoachMark } from '@/play/CoachMark';
-import { hintsRemaining } from '@/play/hintPolicy';
+import { hintAccess } from '@/play/hintPolicy';
+import { useAdsUi, watchAdForHint } from '@/play/rewardedHint';
 import { TUTORIAL_FINAL_LEVEL, tilesToGuide, tutorialStepFor } from '@/play/tutorial';
 import { BoardView } from '@/render/BoardView';
 import { describeChange } from '@/render/a11y';
 import { layoutBoard } from '@/render/geometry';
 import { feedback } from '@/services/feedback';
+import { useEntitlements } from '@/state/entitlementStore';
 import { useGame } from '@/state/gameStore';
 import { useSettings } from '@/state/settingsStore';
 import { Button } from '@/ui/Button';
@@ -32,6 +34,10 @@ export default function Play() {
   const dispatch = useGame((s) => s.dispatch);
   const lastHint = useGame((s) => s.lastHint);
   const tutorial = useSettings((s) => s.tutorial);
+  const noAds = useEntitlements((s) => s.active.has('no_ads'));
+  const adsAvailable = useAdsUi((s) => s.available);
+  const adBusy = useAdsUi((s) => s.busy);
+  const [adMessage, setAdMessage] = useState<string | null>(null);
   const [area, setArea] = useState({ width: 0, height: 0 });
   const progression = useProgression();
   const requested = getLevel(levelId ?? '');
@@ -84,9 +90,7 @@ export default function Play() {
     }
   }, [completion, level]);
 
-  const onHint = useCallback(() => {
-    const before = useGame.getState().game;
-    const index = useGame.getState().requestHint();
+  const afterHint = useCallback((before: ReturnType<typeof useGame.getState>['game'], index: number | null) => {
     const after = useGame.getState().game;
     if (index === null || !before || !after) return;
     const w = after.board.width;
@@ -97,6 +101,33 @@ export default function Play() {
     if (change) AccessibilityInfo.announceForAccessibility(change);
     feedback(after.status === 'won' ? 'win' : 'rotate');
   }, []);
+
+  const onHint = useCallback(async () => {
+    setAdMessage(null);
+    const before = useGame.getState().game;
+    if (!before) return;
+    const access = hintAccess(before.hintsUsed, { noAds, adsAvailable });
+    if (access.kind === 'watchAd') {
+      const outcome = await watchAdForHint();
+      // Grants nothing unless the ad SDK confirmed the reward.
+      const index = useGame.getState().requestRewardedHint(outcome);
+      if (index === null) {
+        const msg =
+          outcome.kind === 'dismissed'
+            ? 'Watch the whole video to earn a hint.'
+            : outcome.kind === 'rewarded'
+              ? null
+              : outcome.kind === 'unavailable'
+                ? outcome.reason
+                : 'The ad could not be shown.';
+        setAdMessage(msg);
+        if (msg) AccessibilityInfo.announceForAccessibility(msg);
+      }
+      afterHint(before, index);
+      return;
+    }
+    afterHint(before, useGame.getState().requestHint());
+  }, [noAds, adsAvailable, afterHint]);
 
   const onLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -117,6 +148,17 @@ export default function Play() {
   if (!game || !level) return <View style={styles.root} />;
 
   const layout = layoutBoard(level.width, level.height, area.width, area.height);
+  const access = hintAccess(game.hintsUsed, { noAds, adsAvailable });
+  const hintLabel =
+    adBusy
+      ? 'Loading ad…'
+      : access.kind === 'free'
+        ? `Hint · ${access.remaining}`
+        : access.kind === 'unlimited'
+          ? 'Hint'
+          : access.kind === 'watchAd'
+            ? 'Hint · Ad'
+            : 'No hints';
   const step = tutorialStepFor(level.id, tutorial);
   const guide = step?.guide && game.status === 'playing' ? tilesToGuide(level, game) : undefined;
   const candidate = nextLevel(level.id);
@@ -167,6 +209,11 @@ export default function Play() {
         {layout.cell > 0 ? <BoardView game={game} cell={layout.cell} onTilePress={onTilePress} hint={lastHint} guide={guide} /> : null}
       </View>
 
+      {adMessage ? (
+        <Text style={styles.adMessage} accessibilityLiveRegion="polite">
+          {adMessage}
+        </Text>
+      ) : null}
       {step ? <CoachMark step={step} onSkip={() => useSettings.getState().update({ tutorial: 'skipped' })} /> : null}
 
       <View style={styles.toolbar}>
@@ -190,12 +237,16 @@ export default function Play() {
         />
         <Button
           testID="hint"
-          label={`Hint · ${hintsRemaining(game.hintsUsed)}`}
+          label={hintLabel}
           variant="secondary"
           compact
-          disabled={game.status !== 'playing' || hintsRemaining(game.hintsUsed) === 0}
-          accessibilityHint="Rotates one tile toward a solution. Using a hint caps this level at two stars."
-          onPress={onHint}
+          disabled={game.status !== 'playing' || access.kind === 'none' || adBusy}
+          accessibilityHint={
+            access.kind === 'watchAd'
+              ? 'Watch a short video ad to get a hint. Using a hint caps this level at two stars.'
+              : 'Rotates one tile toward a solution. Using a hint caps this level at two stars.'
+          }
+          onPress={() => void onHint()}
           style={styles.flex}
         />
       </View>
@@ -244,6 +295,7 @@ const styles = StyleSheet.create({
   boardArea: { flex: 1, margin: spacing.md, alignItems: 'center', justifyContent: 'center' },
   toolbar: { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.md, paddingBottom: spacing.sm },
   flex: { flex: 1 },
+  adMessage: { ...type.caption, textAlign: 'center', paddingHorizontal: spacing.md, paddingBottom: spacing.sm },
 });
 
 export { RouteError as ErrorBoundary } from '@/ui/RouteError';

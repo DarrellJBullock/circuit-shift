@@ -74,12 +74,22 @@ Legend: ✅ done · 🔄 in progress · ⬜ todo · 🔑 needs an external decis
 - ⬜ Analytics hooks for tutorial_start/complete, hint_used, daily_start/complete (Phase 6 typed interface)
 
 ## Phase 6: Purchases, ads, analytics, privacy
-- ⬜ Verify SDK-58 compatibility of `react-native-purchases` and `react-native-google-mobile-ads`
-- ⬜ `PurchasesAdapter` (disabled state when no key) with restore purchases; entitlements kept separate from progress 🔑 RevenueCat key, product IDs
-- ⬜ `AdsAdapter`: rewarded only, test units in dev, ATT/UMP consent; grants only on a verified reward callback 🔑 AdMob IDs
-- ⬜ Shop screen (remove ads, premium chapter, founder bundle)
-- ⬜ `Analytics` typed interface with a no-op/disabled implementation, plus event catalogue 🔑 analytics provider
-- ⬜ Tests: purchases cannot unlock from local flags; reward requires the callback
+- ✅ Compatibility verified: `react-native-purchases` 10.15.1 and `react-native-google-mobile-ads` 17.4.0 on SDK 58 / RN 0.88. expo-doctor passes 20/20, and the native build compiles and launches on the simulator
+- ✅ `app.config.ts`: AdMob app IDs from env; Google sample IDs in dev; **production builds fail** without real IDs. Info.plist has no microphone or tracking usage strings
+- ✅ Purchases adapter (RevenueCat + explicit disabled state): products, purchase, restore, live customer-info listener; entitlements in memory only, from verified customer info
+- ✅ Rewarded-ads adapter (Google + disabled state): UMP consent on first use (with stored-consent fallback), non-personalized requests, preload, reward decided by a pure state machine on `EARNED_REWARD`
+- ✅ Hint economy: 3 free per level → "Remove Ads" owners get unlimited hints without ads → otherwise "Hint · Ad". The game pauses during ads; there are no forced ads anywhere
+- ✅ Premium chapter gate (`premium_content`) in progression
+- ✅ Shop screen with honest unavailable state, prices from the store, "Owned" state, restore; Home → Shop
+- ✅ Typed analytics: 11 events, opt-in (default off), no-op sink until a vendor is chosen, store-driven bridge, failures isolated
+- ✅ Settings → Privacy rewritten: on-device storage, analytics opt-in, ad behaviour, RevenueCat disclosure, "Ad privacy choices" when UMP requires it, Restore purchases
+- ✅ Tests: reward needs the callback (exhaustive event orderings); Google adapter glue; entitlements can't come from local rows or flags; disabled adapters never grant; premium gate; hint economy; analytics opt-in and no personal data
+- ✅ Simulator: Shop "Store unavailable"; **a real Google test rewarded ad played, reported "Reward granted", and applied exactly one hint**, with the game paused and resumed
+- ⬜ Device-test the early-dismiss path (close before the reward → no hint); covered by unit tests only
+- 🔑 RevenueCat project, public SDK key, App Store products (see DEVELOPMENT.md → Setting up RevenueCat)
+- 🔑 AdMob app, rewarded unit, published consent message (DEVELOPMENT.md → Setting up AdMob)
+- 🔑 Analytics vendor (or none); privacy policy text must match the choice
+- 🔑 Product decisions to confirm: "Remove Ads" = unlimited hints without ads (there are no other ads); prices
 
 ## Phase 7–8: TestFlight, balancing, release
 - ⬜ EAS project, `eas.json` profiles 🔑 Apple Developer team

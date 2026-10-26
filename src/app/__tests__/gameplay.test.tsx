@@ -147,7 +147,7 @@ describe('gameplay flow', () => {
     expect(useGame.getState().game!.moves).toBe(2);
   });
 
-  it('offers three free hints, then disables the button', async () => {
+  it('offers three free hints, then an ad hint that grants nothing without a reward', async () => {
     await openLevel();
     const hint = () => screen.getByTestId('hint');
     expect(hint().props.accessibilityLabel).toBe('Hint · 3');
@@ -155,7 +155,12 @@ describe('gameplay flow', () => {
     expect(useGame.getState().game!.hintsUsed).toBe(1);
     await fireEvent.press(hint());
     await fireEvent.press(hint());
-    expect(hint().props.accessibilityLabel).toBe('Hint · 0');
+    expect(hint().props.accessibilityLabel).toBe('Hint · Ad');
+    // Consent (mocked) does not allow ads: no reward, no hint, button disabled.
+    await fireEvent.press(hint());
+    expect(await screen.findByText('Ads are not available.')).toBeTruthy();
+    expect(useGame.getState().game!.hintsUsed).toBe(3);
+    expect(hint().props.accessibilityLabel).toBe('No hints');
     expect(hint().props.accessibilityState.disabled).toBe(true);
   });
 

@@ -139,6 +139,7 @@ export async function loadSettings(db: SqlDatabase): Promise<Settings> {
     soundEnabled: bool('soundEnabled', DEFAULT_SETTINGS.soundEnabled),
     motion: pick('motion', MOTION, DEFAULT_SETTINGS.motion),
     tutorial: pick('tutorial', TUTORIAL, DEFAULT_SETTINGS.tutorial),
+    analyticsEnabled: bool('analyticsEnabled', DEFAULT_SETTINGS.analyticsEnabled),
   };
 }
 
