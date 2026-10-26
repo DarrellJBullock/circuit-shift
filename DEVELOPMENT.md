@@ -50,6 +50,7 @@ npm run typecheck        # tsc --noEmit
 npm test                 # all Jest suites
 npm run test:engine      # engine + level suites only
 npm run validate-levels  # schema + solver validation of every shipped level
+npm run generate-levels  # regenerate planned levels into src/levels/data/*.generated.json
 npm run lint             # eslint (type-aware promise rules, engine purity)
 npm run check            # typecheck + lint + tests + level validation
 npm run ios              # expo run:ios (prebuild + pods + build + launch)
@@ -84,6 +85,31 @@ native behaviour only in `app.json` and config plugins.
 - **Monetization adapters (Phase 6)** each expose an explicit `disabled` state. Entitlements come
   only from the store SDK, never from local flags.
 
+## Storage
+
+`src/storage` keeps SQLite behind `SqlDatabase` (`sql.ts`). The app uses `expoDatabase.ts`; tests use
+`test/sqlite/nodeDatabase.ts` (Node 24's built-in `node:sqlite`, in memory), so migrations and
+queries run against a real engine.
+
+- **Migrations** (`migrations.ts`): append-only, numbered 1..n, tracked in `PRAGMA user_version`.
+  Each migration runs in one transaction with its version bump. A database from a newer build throws
+  `MigrationError('newerSchema')`, and the app then runs from memory instead of risking data loss.
+- **Persistence** (`persistence.ts`): loads the stores at startup, then subscribes to them. Stores
+  never import storage code. All writes go through one serialized queue.
+- **Sessions:** one resume slot. Snapshots carry a level fingerprint (`levels/fingerprint.ts`); a
+  mismatch discards the snapshot, so it is never replayed onto an edited level.
+- **Entitlements are deliberately not stored here** (Phase 6: they come from the store SDK only).
+
+## Generator and level data
+
+- `src/engine/generator.ts` (`gen-1`): deterministic for a given spec. Attempt `a` seeds from
+  `hash("gen-1:<seed>:<a>")`. **Any change to the output for an existing seed needs a new version
+  string.** New rejection filters that consume no randomness are safe.
+- `src/levels/plans.ts` holds the curated per-level specs. `npm run generate-levels` writes
+  `src/levels/data/<chapter>.generated.json`. Review the diff and commit it. A test regenerates every
+  planned level and fails on any difference.
+- Hand-built levels (tutorials) use the grid notation below.
+
 ## Solver
 
 `solve(puzzle, board, limits)` does a layered BFS over **tap counts** per rotatable tile. Taps on
@@ -94,6 +120,13 @@ Results:
 - `optimal`: minimum moves plus the solution rotations
 - `unsolvable`: the whole space was searched and no solution exists
 - `unknown`: the state or time limit was hit. This never counts as solved or optimal.
+
+`solveSearch` (`dfs-bb-1`) is a row-major DFS with branch-and-bound. On strict levels
+(`noOpenEnds` + `allTilesPowered`), every open port must meet a reciprocal port, so each orientation
+must agree with its already-placed neighbours. That pruning is exact. A completed search proves the
+optimum. A cut-off search that holds a solution returns `feasible`, which is an upper bound and is
+never shown as "Optimal". `solveAuto` chooses between the two solvers. A property test checks the
+DFS against the BFS on 60 generated boards.
 
 `nextHint(puzzle, currentBoard)` solves from the player's **current** board, so hints stay correct
 after wrong moves.

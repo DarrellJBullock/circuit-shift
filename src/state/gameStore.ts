@@ -1,11 +1,21 @@
 import { create } from 'zustand';
 
-import { type GameAction, type GameState, type Stars, computeStars, createGame, gameReducer } from '@/engine';
+import {
+  type GameAction,
+  type GameState,
+  type Stars,
+  computeStars,
+  createGame,
+  gameReducer,
+  restoreGame,
+} from '@/engine';
+import { levelFingerprint } from '@/levels/fingerprint';
 import { getLevel } from '@/levels/registry';
 import type { Level } from '@/levels/schema';
 import { levelToPuzzle } from '@/levels/validate';
 
 import { useProgress } from './progressStore';
+import { useSession } from './sessionStore';
 
 export interface CompletionSummary {
   readonly stars: Stars;
@@ -18,8 +28,14 @@ interface GameStore {
   readonly level: Level | null;
   readonly game: GameState | null;
   readonly completion: CompletionSummary | null;
-  /** Starts (or restarts) a level. Returns false for unknown ids. */
-  start(levelId: string): boolean;
+  /** True when the current game was restored from an interrupted session. */
+  readonly resumed: boolean;
+  /**
+   * Starts a level, resuming its interrupted session when one matches (same
+   * level id and layout fingerprint). `fresh` forces a clean start.
+   * Returns false for unknown ids.
+   */
+  start(levelId: string, options?: { fresh?: boolean }): boolean;
   dispatch(action: GameAction): void;
   clear(): void;
 }
@@ -32,14 +48,23 @@ export const useGame = create<GameStore>((set, get) => ({
   level: null,
   game: null,
   completion: null,
+  resumed: false,
 
-  start: (levelId) => {
+  start: (levelId, options) => {
     const level = getLevel(levelId);
     if (!level) {
-      set({ level: null, game: null, completion: null });
+      set({ level: null, game: null, completion: null, resumed: false });
       return false;
     }
-    set({ level, game: createGame(levelToPuzzle(level)), completion: null });
+    const puzzle = levelToPuzzle(level);
+    const saved = useSession.getState().saved;
+    const restored =
+      !options?.fresh && saved?.levelId === level.id && saved.fingerprint === levelFingerprint(level)
+        ? restoreGame(puzzle, saved.snapshot)
+        : null;
+    // A restored game is never already won (snapshots are only kept mid-play).
+    const game = restored && restored.status !== 'won' ? restored : createGame(puzzle);
+    set({ level, game, completion: null, resumed: game === restored });
     return true;
   },
 
@@ -72,5 +97,5 @@ export const useGame = create<GameStore>((set, get) => ({
     set({ game: next });
   },
 
-  clear: () => set({ level: null, game: null, completion: null }),
+  clear: () => set({ level: null, game: null, completion: null, resumed: false }),
 }));

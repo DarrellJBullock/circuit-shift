@@ -1,10 +1,10 @@
 import { rotateMask } from '@/engine';
-import { LEVELS } from '@/levels/registry';
+import { getLevel } from '@/levels/registry';
 
 import { referenceMoves, useGame } from '../gameStore';
 import { mergeResult, useProgress } from '../progressStore';
 
-const level = LEVELS[0]!;
+const level = getLevel('ch1-03')!;
 
 beforeEach(() => {
   useGame.getState().clear();

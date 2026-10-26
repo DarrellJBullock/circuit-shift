@@ -2,9 +2,10 @@ import { AppState, type AppStateStatus } from 'react-native';
 import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
 import { tapDistance } from '@/engine';
-import { LEVELS } from '@/levels/registry';
+import { getLevel } from '@/levels/registry';
 import { useGame } from '@/state/gameStore';
 import { useProgress } from '@/state/progressStore';
+import { useSession } from '@/state/sessionStore';
 
 // Skia needs a native canvas; the board's Skia layer is replaced by a stub.
 // The accessible hit grid (real React Native) is what the player taps.
@@ -13,6 +14,12 @@ jest.mock('@shopify/react-native-skia', () => {
   return { Canvas: View, useClock: () => ({ value: 0 }) };
 });
 jest.mock('@/render/TileNode', () => ({ TileNode: () => null }));
+// Real persistence, backed by an in-memory node:sqlite database per test file.
+jest.mock('@/storage/expoDatabase', () => {
+  const { openNodeDatabase } = jest.requireActual('../../../test/sqlite/nodeDatabase');
+  const db = openNodeDatabase();
+  return { openExpoDatabase: async () => db };
+});
 
 // One AppState spy for the whole file, so unmount cleanup always has a subscription.
 const appStateListeners = new Set<(s: AppStateStatus) => void>();
@@ -24,7 +31,7 @@ jest.spyOn(AppState, 'addEventListener').mockImplementation((_, fn) => {
   >;
 });
 
-const level = LEVELS[0]!;
+const level = getLevel('ch1-03')!;
 const APP_DIR = './src/app';
 
 /** Rotate a tile the way VoiceOver (and these tests) do: the activate action. */
@@ -56,14 +63,16 @@ async function openLevel() {
 
 beforeEach(() => {
   useProgress.setState({ results: {} });
+  useSession.setState({ saved: null });
 });
 
 describe('gameplay flow', () => {
   it('goes from Home to a playable level in one tap', async () => {
     await renderRouter(APP_DIR, { initialUrl: '/' });
     await fireEvent.press(screen.getByTestId('home-play'));
-    expect(await screen.findByText(level.title)).toBeTruthy();
-    expect(screen.getByText(`Optimal ${level.optimalMoves}`)).toBeTruthy();
+    const first = getLevel('ch1-01')!;
+    expect(await screen.findByText(first.title)).toBeTruthy();
+    expect(screen.getByText(`Optimal ${first.optimalMoves}`)).toBeTruthy();
   });
 
   it('counts moves, undoes them, and solves to a 3-star completion', async () => {
@@ -107,6 +116,23 @@ describe('gameplay flow', () => {
     await openLevel();
     appStateListeners.forEach((fn) => fn('background'));
     await waitFor(() => expect(useGame.getState().game!.status).toBe('paused'));
+  });
+
+  it('offers Continue for an interrupted level and resumes it', async () => {
+    await openLevel();
+    await tapTile(1, 0);
+    await tapTile(2, 0);
+    await fireEvent.press(screen.getByTestId('pause-button'));
+    await fireEvent.press(await screen.findByText('Quit to levels'));
+    await waitFor(() => expect(useSession.getState().saved?.levelId).toBe(level.id));
+
+    await renderRouter(APP_DIR, { initialUrl: '/' });
+    const cont = await screen.findByTestId('home-play');
+    expect(cont.props.accessibilityLabel).toBe(`Continue · ${level.title}`);
+    await fireEvent.press(cont);
+    await screen.findByText(level.title);
+    expect(useGame.getState().resumed).toBe(true);
+    expect(useGame.getState().game!.moves).toBe(2);
   });
 
   it('shows a recoverable screen for an unknown level id', async () => {

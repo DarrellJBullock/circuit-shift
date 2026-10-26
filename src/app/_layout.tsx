@@ -1,10 +1,13 @@
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { LEVEL_LOAD_ERRORS } from '@/levels/registry';
+import { openExpoDatabase } from '@/storage/expoDatabase';
+import { type Persistence, initPersistence } from '@/storage/persistence';
 import { colors } from '@/ui/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
@@ -13,11 +16,42 @@ if (__DEV__ && LEVEL_LOAD_ERRORS.length > 0) {
   console.warn('Invalid levels were skipped:', JSON.stringify(LEVEL_LOAD_ERRORS, null, 2));
 }
 
+/** Never hold the splash longer than this; the game runs from memory instead. */
+const STORAGE_TIMEOUT_MS = 3000;
+
+async function startPersistence(): Promise<Persistence | null> {
+  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), STORAGE_TIMEOUT_MS));
+  try {
+    return await Promise.race([openExpoDatabase().then((db) => initPersistence(db)), timeout]);
+  } catch (e) {
+    console.warn('[storage] running without persistence:', e);
+    return null;
+  }
+}
+
 export default function RootLayout() {
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
-    // Nothing async to load yet; Phase 3 waits for the SQLite hydrate here.
-    SplashScreen.hideAsync().catch(() => undefined);
+    let persistence: Persistence | null = null;
+    let cancelled = false;
+    void startPersistence().then((p) => {
+      persistence = p;
+      if (cancelled) p?.dispose();
+      setReady(true);
+      SplashScreen.hideAsync().catch(() => undefined);
+    });
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') void persistence?.flush();
+    });
+    return () => {
+      cancelled = true;
+      sub.remove();
+      persistence?.dispose();
+    };
   }, []);
+
+  if (!ready) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>

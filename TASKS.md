@@ -31,13 +31,19 @@ Legend: ✅ done · 🔄 in progress · ⬜ todo · 🔑 needs an external decis
 - Decision: **no counter-clockwise rotation.** It would change the move model and invalidate proven optimal counts and star thresholds. VoiceOver rotates with the standard activate gesture.
 
 ## Phase 3: Solver, level schema, progression, 20 levels
-- ⬜ SQLite: `db.ts`, versioned migrations (`schema_version` table), progress repo, settings repo, session repo
-- ⬜ Hydrate stores before hiding the splash; persist on background and on completion
-- ⬜ Resume an interrupted game from `snapshotGame` (Continue button)
-- ⬜ Migration tests (fresh install, v1→v2 upgrade, corrupt row handling)
-- ⬜ Bounded heuristic solver for large boards (constraint DFS with edge-consistency pruning + branch-and-bound; reports `upperBound` when cut off)
-- ⬜ Generator `gen-1`: solved spanning circuit → branches/obstacles → seeded scramble → reject trivial/unsolvable/too-complex → save metadata
-- ⬜ Chapter 1 complete (20 levels), each with proven optimum where feasible
+- ✅ SQLite storage behind a small `SqlDatabase` interface (expo-sqlite in the app, `node:sqlite` in tests)
+- ✅ Versioned migrations via `PRAGMA user_version`. Each migration runs in one transaction with its version bump; downgrades are refused (`newerSchema`). Schema v1: `level_progress`, `settings`, `sessions`, `daily_challenges`
+- ✅ Repositories that sanitize every row read from disk (corrupt rows are skipped, never thrown)
+- ✅ Persistence layer: loads stores before the splash hides (3s timeout, then runs from memory); writes settings and results through one serialized queue; saves the in-progress game debounced after moves, immediately on background and on leaving a level; clears it on completion
+- ✅ Resume an interrupted game (Continue on Home; automatic when reopening that level). A layout fingerprint discards snapshots from changed levels (seen working on device)
+- ✅ Bounded search solver `dfs-bb-1`: row-major DFS with exact port-consistency pruning on strict levels plus branch-and-bound; reports `optimal`, `feasible` (upper bound), `unsolvable` or `unknown`. `solveAuto` picks the solver; hints use it
+- ✅ Property test: the DFS agrees with the exhaustive BFS on 60 generated boards (state spaces up to 262,144)
+- ✅ Generator `gen-1`: obstacles → round-robin spanning trees → tile types → locked hint wires → seeded scramble → solver validation with move/receiver bounds; deterministic retries
+- ✅ Chapter 1 complete: 20 levels (3 hand-built tutorials + 17 generated from `src/levels/plans.ts`), every optimum proven; `npm run generate-levels`; a test regenerates every level and requires an exact match with the committed JSON
+- ✅ Simulator: persistence survives force-kill → Continue restores board, moves and timer; 7×8 board renders with ≥ 44pt cells
+- ⬜ Gate the play route on unlock state. Deep links currently bypass level-select locking; required before premium chapters (Phase 6)
+- ⬜ 1-12 "Crossroads" needed attempt 173/200 to find a cross; give `minCrosses` plans a higher `maxAttempts` if their bounds are retuned
+- Note: proving optimality takes only 30–45 search states per level, because tree circuits are almost fully determined by local constraints. That makes the levels logically solvable, but more loops and ambiguity may be wanted for hard tiers (Phase 5/7 balancing)
 
 ## Phase 4: Graphics, animation, audio, accessibility
 - ⬜ Completion particle burst (restrained; disabled under reduced motion)

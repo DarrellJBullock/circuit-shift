@@ -147,30 +147,3 @@ export function tapDistance(baseMask: number, from: Rotation, to: Rotation): num
   const k = distinctRotationCount(baseMask);
   return (((to - from) % k) + k) % k;
 }
-
-export interface Hint {
-  readonly index: number;
-  readonly rotation: Rotation;
-}
-
-/**
- * Next hint from the player's current board: the first tile (row-major) whose
- * orientation differs from a shortest solution reachable from here. Returns
- * null when already solved or when the solver could not prove a solution.
- */
-export function nextHint(
-  puzzle: Puzzle,
-  board: Board,
-  limits: SolverLimits = DEFAULT_LIMITS,
-): Hint | null {
-  const result = solve(puzzle, board, limits);
-  if (result.status !== 'optimal' || result.moves === 0) return null;
-  for (let i = 0; i < board.tiles.length; i++) {
-    const tile = board.tiles[i]!;
-    const target = result.rotations[i]!;
-    if (isRotatable(tile) && tapDistance(tile.baseMask, tile.rotation, target) > 0) {
-      return { index: i, rotation: target };
-    }
-  }
-  return null;
-}

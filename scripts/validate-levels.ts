@@ -8,7 +8,7 @@
  *
  * Exits non-zero on any error. Usage: npm run validate-levels
  */
-import { solve, type SolverLimits } from '../src/engine';
+import { solveAuto, type SolverLimits } from '../src/engine';
 import { RAW_LEVELS, CHAPTERS } from '../src/levels/registry';
 import { levelToPuzzle, validateLevel } from '../src/levels/validate';
 
@@ -37,7 +37,7 @@ for (const raw of RAW_LEVELS) {
     continue;
   }
   const level = result.value;
-  const r = solve(levelToPuzzle(level), undefined, LIMITS);
+  const r = solveAuto(levelToPuzzle(level), undefined, LIMITS);
   const par = level.solutionMetadata.parMoves;
   const claim = level.solutionMetadata.optimality;
 
@@ -52,6 +52,11 @@ for (const raw of RAW_LEVELS) {
       break;
     case 'unsolvable':
       error(`solver proved the level unsolvable from its start state`);
+      break;
+    case 'feasible':
+      if (claim === 'proven') error(`claims proven optimum but search stopped (${r.reason}) at ${r.moves}`);
+      if (r.moves < par) error(`par ${par} exceeds a verified solution of ${r.moves}`);
+      console.log(`  · feasible ${r.moves} (${r.reason}); par ${par} is an upper bound`);
       break;
     case 'unknown':
       if (claim === 'proven') error(`claims proven optimum but solver hit ${r.reason} after ${r.explored} states`);

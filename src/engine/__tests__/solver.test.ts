@@ -1,6 +1,7 @@
 import { createGame, gameReducer } from '../game';
 import { evaluate } from '../rules';
-import { applyRotations, nextHint, solve, stateSpaceSize, tapDistance } from '../solver';
+import { nextHint } from '../hints';
+import { applyRotations, solve, stateSpaceSize, tapDistance } from '../solver';
 import { CANONICAL_BASE_MASK } from '../tiles';
 import { LOOSE, puzzle } from './helpers';
 

@@ -145,7 +145,7 @@ export default function Play() {
       {game.status === 'paused' ? (
         <PauseOverlay
           onResume={() => dispatch({ type: 'resume' })}
-          onRestart={() => useGame.getState().start(level.id)}
+          onRestart={() => useGame.getState().start(level.id, { fresh: true })}
           onQuit={goLevels}
         />
       ) : null}
@@ -157,7 +157,7 @@ export default function Play() {
           parMoves={level.solutionMetadata.parMoves}
           hasNext={next !== undefined}
           onNext={() => next && router.replace({ pathname: '/play/[levelId]', params: { levelId: next.id } })}
-          onReplay={() => useGame.getState().start(level.id)}
+          onReplay={() => useGame.getState().start(level.id, { fresh: true })}
           onLevels={goLevels}
         />
       ) : null}

@@ -7,3 +7,6 @@ export * from './game';
 export * from './scoring';
 export * from './rng';
 export * from './solver';
+export * from './searchSolver';
+export * from './hints';
+export * from './generator';

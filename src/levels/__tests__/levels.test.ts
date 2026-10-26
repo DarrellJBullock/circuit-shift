@@ -1,10 +1,13 @@
-import { createRng, solve } from '@/engine';
+import { createRng, generatePuzzle, solveAuto } from '@/engine';
 
 import { defineHandcrafted } from '../author';
+import generatedCh1 from '../data/ch1.generated.json';
+import { levelFromGenerated } from '../fromGenerated';
+import { CHAPTER1_PLAN } from '../plans';
 import { LEVELS, LEVEL_LOAD_ERRORS, RAW_LEVELS, getLevel, nextLevel } from '../registry';
 import { levelToPuzzle, validateLevel } from '../validate';
 
-const sample = RAW_LEVELS[0]!;
+const sample = RAW_LEVELS.find((l) => l.id === 'ch1-03')!;
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 
 describe('shipped levels', () => {
@@ -14,7 +17,7 @@ describe('shipped levels', () => {
   });
 
   it.each(RAW_LEVELS.map((l) => [l.id, l] as const))('%s is solvable with its stored optimum', (_, level) => {
-    const r = solve(levelToPuzzle(level), undefined, { maxStates: 2_000_000, maxMs: 20_000 });
+    const r = solveAuto(levelToPuzzle(level), undefined, { maxStates: 2_000_000, maxMs: 20_000 });
     expect(r.status).toBe('optimal');
     if (r.status === 'optimal' && level.optimalMoves !== null) {
       expect(r.moves).toBe(level.optimalMoves);
@@ -27,9 +30,27 @@ describe('shipped levels', () => {
   });
 
   it('looks up levels and chapter order', () => {
-    expect(getLevel('ch1-01')?.title).toBe('First Spark');
+    expect(getLevel('ch1-03')?.title).toBe('First Spark');
     expect(getLevel('missing')).toBeUndefined();
     expect(nextLevel('missing')).toBeUndefined();
+  });
+});
+
+describe('generated level data', () => {
+  it.each(CHAPTER1_PLAN.map((p) => [p.id, p] as const))(
+    '%s is reproduced exactly from its plan and seed',
+    (id, plan) => {
+      const r = generatePuzzle(plan.spec);
+      expect(r.ok).toBe(true);
+      if (!r.ok) return;
+      const committed = (generatedCh1 as unknown[]).find((l) => (l as { id: string }).id === id);
+      expect(levelFromGenerated(plan, r.puzzle)).toEqual(committed);
+    },
+  );
+
+  it('chapter 1 ships 20 levels in contiguous order', () => {
+    const ch1 = LEVELS.filter((l) => l.chapterId === 'ch1').map((l) => l.order).sort((a, b) => a - b);
+    expect(ch1).toEqual(Array.from({ length: 20 }, (_, i) => i + 1));
   });
 });
 

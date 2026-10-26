@@ -48,7 +48,8 @@
     "test": "jest",
     "test:engine": "jest src/engine src/levels",
     "validate-levels": "tsx scripts/validate-levels.ts",
-    "check": "npm run typecheck && npm run lint && npm test -- --ci && npm run validate-levels"
+    "check": "npm run typecheck && npm run lint && npm test -- --ci && npm run validate-levels",
+    "generate-levels": "tsx scripts/generate-levels.ts"
   },
   "private": true,
   "jest": {
