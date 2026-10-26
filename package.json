@@ -1,22 +1,73 @@
 {
-  "name": "circuit_shift",
-  "version": "1.0.0",
+  "name": "circuit-shift",
+  "version": "0.1.0",
   "main": "index.ts",
   "dependencies": {
+    "@shopify/react-native-skia": "2.14.0",
     "expo": "~58.0.19",
+    "expo-asset": "~58.0.18",
+    "expo-audio": "~58.0.10",
+    "expo-constants": "~58.0.13",
+    "expo-dev-client": "~58.0.15",
+    "expo-font": "~58.0.10",
+    "expo-haptics": "~58.0.7",
+    "expo-linking": "~58.0.14",
+    "expo-router": "~58.0.26",
+    "expo-splash-screen": "~58.0.11",
+    "expo-sqlite": "~58.0.14",
     "expo-status-bar": "~58.0.4",
+    "expo-system-ui": "~58.0.6",
     "react": "19.3.0",
-    "react-native": "0.88.0"
+    "react-dom": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.0",
+    "react-native-worklets": "0.13.0",
+    "zustand": "^5.0.16"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.19.2",
     "@types/react": "~19.3.0",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~58.0.4",
+    "jest": "^30.5.2",
+    "jest-expo": "^58.0.12",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "start": "expo start --dev-client",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "jest",
+    "test:engine": "jest src/engine src/levels",
+    "validate-levels": "tsx scripts/validate-levels.ts",
+    "check": "npm run typecheck && npm run lint && npm test -- --ci && npm run validate-levels"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "moduleNameMapper": {
+      "^react-native-reanimated/mock$": "<rootDir>/test/mocks/reanimated.impl.ts",
+      "^react-native-reanimated$": "<rootDir>/test/mocks/reanimated.ts",
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/ios/",
+      "/android/"
+    ],
+    "testMatch": [
+      "**/?(*.)+(test).[jt]s?(x)"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.ts"
+    ]
+  }
 }
