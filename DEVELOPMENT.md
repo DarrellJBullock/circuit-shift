@@ -51,6 +51,7 @@ npm test                 # all Jest suites
 npm run test:engine      # engine + level suites only
 npm run validate-levels  # schema + solver validation of every shipped level
 npm run generate-levels  # regenerate planned levels into src/levels/data/*.generated.json
+npm run synthesize-sfx   # regenerate assets/audio/*.wav (original, deterministic)
 npm run lint             # eslint (type-aware promise rules, engine purity)
 npm run check            # typecheck + lint + tests + level validation
 npm run ios              # expo run:ios (prebuild + pods + build + launch)
@@ -84,6 +85,22 @@ native behaviour only in `app.json` and config plugins.
   rotations snap, power appears without a stagger, and glows don't pulse.
 - **Monetization adapters (Phase 6)** each expose an explicit `disabled` state. Entitlements come
   only from the store SDK, never from local flags.
+
+## Audio, feedback and accessibility
+
+- **Sound effects** are synthesized by `scripts/synthesize-sfx.ts`. No third-party audio is used,
+  so there is nothing to license. Edit the voices there and rerun.
+- `services/audio.ts` sets an **ambient** session (`playsInSilentMode: false`, `mixWithOthers`).
+  If it can't configure audio, it disables itself and never throws into gameplay.
+- `services/feedback.ts` is the one entry point per game event: sound plus haptic, each respecting
+  its own toggle.
+- **Contrast** is enforced by `src/ui/__tests__/contrast.test.ts`. Add new colour pairs there when
+  you add tokens.
+- **Never use colour alone:** signal colours have glyphs (circle/diamond), and shorts have a broken
+  wire core.
+- **VoiceOver:** tile labels describe orientation and state, and `describeChange` announces power,
+  shorts and completion after every move.
+- **Dynamic Type:** use `fontScale` caps only on dense fixed-layout labels; body text scales fully.
 
 ## Storage
 

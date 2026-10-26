@@ -130,3 +130,25 @@ describe('coloured signals', () => {
     expect(SOUTH).toBe(4);
   });
 });
+
+describe('inflowPort (flow animation direction)', () => {
+  it('points each powered tile back toward the source', () => {
+    const { inflowPort } = jest.requireActual('../power') as typeof import('../power');
+    // Source → straight → elbow (turns south) → receiver below.
+    const b = board(['S1 I1 L2', '.  .  R0']);
+    const p = computePower(b);
+    expect(inflowPort(b, p, 0)).toBe(0); // source
+    expect(inflowPort(b, p, 1)).toBe(WEST);
+    expect(inflowPort(b, p, 2)).toBe(WEST);
+    expect(inflowPort(b, p, 5)).toBe(NORTH);
+    expect(inflowPort(b, p, 3)).toBe(0); // empty
+  });
+
+  it('is 0 for unpowered tiles and shorted networks', () => {
+    const { inflowPort } = jest.requireActual('../power') as typeof import('../power');
+    const dark = board(['S1 I0 R3']);
+    expect(inflowPort(dark, computePower(dark), 1)).toBe(0);
+    const short = board(['S1 T1 S3v', '.  R0 .']);
+    expect(inflowPort(short, computePower(short), 1)).toBe(0);
+  });
+});

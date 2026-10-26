@@ -6,6 +6,7 @@ import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { LEVEL_LOAD_ERRORS } from '@/levels/registry';
+import { initAudio } from '@/services/audio';
 import { openExpoDatabase } from '@/storage/expoDatabase';
 import { type Persistence, initPersistence } from '@/storage/persistence';
 import { colors } from '@/ui/theme';
@@ -35,6 +36,7 @@ export default function RootLayout() {
   useEffect(() => {
     let persistence: Persistence | null = null;
     let cancelled = false;
+    void initAudio();
     void startPersistence().then((p) => {
       persistence = p;
       if (cancelled) p?.dispose();

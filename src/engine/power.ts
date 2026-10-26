@@ -1,4 +1,5 @@
-import { type Board, linkedNeighbors, openEndMask } from './board';
+import { type Board, isLinked, linkedNeighbors, neighborIndex, openEndMask } from './board';
+import { PORTS } from './ports';
 import { type SignalColor, isConductive, sourceColor } from './tiles';
 
 /**
@@ -107,4 +108,21 @@ export function computePower(board: Board): PowerState {
   }
 
   return { networks, networkOf, colorOf, shortedOf, depthOf, openEndsOf };
+}
+
+/**
+ * Port (world orientation) through which power enters a powered tile: the
+ * linked neighbour one BFS step closer to a source (first in N/E/S/W order).
+ * 0 for sources, unpowered tiles and shorted networks. Drives the direction
+ * of the flow animation.
+ */
+export function inflowPort(board: Board, power: PowerState, index: number): number {
+  const depth = power.depthOf[index] ?? -1;
+  if (depth <= 0) return 0;
+  for (const p of PORTS) {
+    if (!isLinked(board, index, p)) continue;
+    const n = neighborIndex(board, index, p);
+    if (power.depthOf[n] === depth - 1) return p;
+  }
+  return 0;
 }

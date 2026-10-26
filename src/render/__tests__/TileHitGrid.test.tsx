@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
-import { createGame, gameReducer } from '@/engine';
+import { createGame, evaluatePuzzle, gameReducer } from '@/engine';
 import { puzzle } from '@/engine/__tests__/helpers';
 
 import { TileHitGrid } from '../TileHitGrid';
@@ -93,5 +93,28 @@ describe('describeTile', () => {
     const b = puzzle(['S1 T1 S3v', '.  R0v .']).board;
     expect(describeTile(b.tiles[1]!, { x: 1, y: 0, color: null, shorted: true })).toContain('Short circuit');
     expect(describeTile(b.tiles[4]!, { x: 1, y: 1, color: null, shorted: false })).toContain('Needs violet');
+  });
+});
+
+describe('describeChange', () => {
+  const { describeChange } = jest.requireActual('../a11y') as typeof import('../a11y');
+
+  it('announces completion, receivers gaining and losing power', () => {
+    const p = puzzle(['R1* T0 R3*', '.   S0* .']);
+    const ev = (rows: string[]) => evaluatePuzzle({ ...p, board: puzzle(rows).board });
+    const one = ev(['R1* T0 R3*', '.   S0* .']); // N,E,S: only the east receiver
+    const both = ev(['R1* T1 R3*', '.   S0* .']); // E,S,W: both receivers
+    const none = ev(['R1* T3 R3*', '.   S0* .']); // W,N,E: source not linked
+    expect(describeChange(one, both, 3)).toBe('Circuit complete. 3 of 3 stars.');
+    expect(describeChange(none, one)).toBe('Receiver powered. 1 of 2.');
+    expect(describeChange(one, none)).toBe('Receiver lost power. 0 of 2.');
+  });
+
+  it('announces a new short circuit and stays quiet otherwise', () => {
+    const p = puzzle(['S1 T0 S3v', '.  R0 .'], { noOpenEnds: false, allTilesPowered: false });
+    const g0 = createGame(p);
+    const g1 = gameReducer(g0, { type: 'rotate', index: 1 });
+    expect(describeChange(g0.evaluation, g1.evaluation)).toContain('Short circuit');
+    expect(describeChange(g0.evaluation, g0.evaluation)).toBeNull();
   });
 });

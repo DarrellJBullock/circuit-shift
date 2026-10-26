@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { getChapter, levelsInChapter } from '@/levels/registry';
 import { useProgress } from '@/state/progressStore';
 import { Screen } from '@/ui/Screen';
-import { MIN_TOUCH, colors, radius, spacing, type } from '@/ui/theme';
+import { MIN_TOUCH, colors, fontScale, radius, spacing, type } from '@/ui/theme';
 
 export default function LevelSelect() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
@@ -43,8 +43,10 @@ export default function LevelSelect() {
               accessibilityState={{ disabled: !unlocked }}
               style={({ pressed }) => [styles.cell, !unlocked && styles.locked, pressed && styles.pressed]}
             >
-              <Text style={styles.num}>{level.order}</Text>
-              <Text style={styles.stars}>
+              <Text style={styles.num} maxFontSizeMultiplier={fontScale.dense}>
+                {level.order}
+              </Text>
+              <Text style={styles.stars} maxFontSizeMultiplier={fontScale.dense}>
                 <Text style={styles.starOn}>{'★'.repeat(stars)}</Text>
                 <Text style={styles.starOff}>{'★'.repeat(3 - stars)}</Text>
               </Text>

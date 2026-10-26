@@ -6,7 +6,8 @@ export const colors = {
   tile: '#17263D',
   tileLocked: '#132034',
   tileEdge: '#22385A',
-  wireIdle: '#355178',
+  // ≥ 3:1 against both tile fills (WCAG 1.4.11): unpowered wires are essential graphics.
+  wireIdle: '#5675A0',
   electricity: '#37DDF7',
   secondary: '#A67AF8',
   source: '#F8B84E',
@@ -45,4 +46,14 @@ export const motion = {
   rotateMs: 180,
   propagateStepMs: 40,
   fadeMs: 220,
+  /** Time for a flow pulse to travel one cell. */
+  flowCellMs: 650,
+  burstMs: 1100,
 } as const;
+
+/**
+ * Dynamic Type caps (maxFontSizeMultiplier). Body text scales fully; dense,
+ * fixed-layout labels are capped so the largest accessibility sizes cannot
+ * push the board or controls off screen.
+ */
+export const fontScale = { display: 1.2, dense: 1.4, control: 1.6 } as const;

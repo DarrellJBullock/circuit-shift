@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { AppState, type LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, AppState, type LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { isAtStart, isConductive } from '@/engine';
@@ -9,11 +9,12 @@ import { CompletionOverlay } from '@/play/CompletionOverlay';
 import { PauseOverlay } from '@/play/PauseOverlay';
 import { formatTime, referenceLabel } from '@/play/format';
 import { BoardView } from '@/render/BoardView';
+import { describeChange } from '@/render/a11y';
 import { layoutBoard } from '@/render/geometry';
-import { haptic } from '@/services/haptics';
+import { feedback } from '@/services/feedback';
 import { useGame } from '@/state/gameStore';
 import { Button } from '@/ui/Button';
-import { MIN_TOUCH, colors, spacing, type } from '@/ui/theme';
+import { MIN_TOUCH, colors, fontScale, spacing, type } from '@/ui/theme';
 
 const TICK_MS = 250;
 
@@ -53,10 +54,14 @@ export default function Play() {
     if (!before || !after) return;
     if (after === before) {
       const tile = before.board.tiles[index];
-      if (tile && tile.locked && isConductive(tile)) haptic('locked');
+      if (tile && tile.locked && isConductive(tile)) feedback('locked');
       return;
     }
-    haptic(after.status === 'won' ? 'win' : 'rotate');
+    const announcement = describeChange(before.evaluation, after.evaluation, useGame.getState().completion?.stars);
+    if (announcement) AccessibilityInfo.announceForAccessibility(announcement);
+    if (after.status === 'won') return feedback('win');
+    const satisfied = (g: typeof after) => g.evaluation.objectives.filter((o) => o.satisfied).length;
+    feedback(satisfied(after) > satisfied(before) ? 'connect' : 'rotate');
   }, []);
 
   const onLayout = useCallback((e: LayoutChangeEvent) => {
@@ -98,23 +103,23 @@ export default function Play() {
           </View>
         </Pressable>
         <View style={styles.titleBlock}>
-          <Text style={styles.levelNo}>
+          <Text style={styles.levelNo} maxFontSizeMultiplier={fontScale.dense}>
             {level.chapterId.replace('ch', 'CHAPTER ')} · {level.order}
           </Text>
-          <Text style={type.heading} numberOfLines={1}>
+          <Text style={type.heading} numberOfLines={1} maxFontSizeMultiplier={fontScale.dense}>
             {level.title}
           </Text>
         </View>
-        <Text style={styles.timer} accessibilityLabel={`Time ${formatTime(game.elapsedMs)}`}>
+        <Text style={styles.timer} maxFontSizeMultiplier={fontScale.dense} accessibilityLabel={`Time ${formatTime(game.elapsedMs)}`}>
           {formatTime(game.elapsedMs)}
         </Text>
       </View>
 
       <View style={styles.stats} accessible accessibilityLabel={`${game.moves} moves. ${referenceLabel(level.optimalMoves, level.solutionMetadata.parMoves)}.`}>
-        <Text style={styles.moves}>
+        <Text style={styles.moves} maxFontSizeMultiplier={fontScale.dense}>
           {game.moves} <Text style={type.caption}>moves</Text>
         </Text>
-        <Text style={type.caption}>{referenceLabel(level.optimalMoves, level.solutionMetadata.parMoves)}</Text>
+        <Text style={type.caption} maxFontSizeMultiplier={fontScale.dense}>{referenceLabel(level.optimalMoves, level.solutionMetadata.parMoves)}</Text>
       </View>
 
       <View testID="board-area" style={styles.boardArea} onLayout={onLayout}>

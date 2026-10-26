@@ -1,4 +1,4 @@
-import { BlurMask, Circle, Group, Path, RoundedRect, vec } from '@shopify/react-native-skia';
+import { BlurMask, Circle, DashPathEffect, Group, Path, RoundedRect, vec } from '@shopify/react-native-skia';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Easing,
@@ -9,10 +9,10 @@ import {
   withTiming,
 } from 'react-native-reanimated';
 
-import { type SignalColor, type Tile, normalizeRotation, portCount } from '@/engine';
+import { type SignalColor, type Tile, normalizeRotation, portCount, rotateMask } from '@/engine';
 import { colors, motion, signalColor } from '@/ui/theme';
 
-import { diamondPath, hatchPath, wirePath } from './geometry';
+import { diamondPath, flowPath, hatchPath, wirePath } from './geometry';
 
 export interface TileNodeProps {
   readonly tile: Tile;
@@ -23,6 +23,8 @@ export interface TileNodeProps {
   readonly shorted: boolean;
   readonly depth: number;
   readonly satisfied: boolean;
+  /** World-orientation port where power enters (0 = none / source). */
+  readonly inPort: number;
   readonly clock: SharedValue<number>;
   readonly reduceMotion: boolean;
 }
@@ -30,7 +32,7 @@ export interface TileNodeProps {
 const QUARTER = Math.PI / 2;
 
 function TileNodeImpl(props: TileNodeProps) {
-  const { tile, x, y, cell, color, shorted, depth, satisfied, clock, reduceMotion } = props;
+  const { tile, x, y, cell, color, shorted, depth, satisfied, inPort, clock, reduceMotion } = props;
   const inset = Math.max(2, cell * 0.04);
   const wireW = Math.max(4, cell * 0.13);
   const center = cell / 2;
@@ -82,6 +84,14 @@ function TileNodeImpl(props: TileNodeProps) {
     () => wirePath(tile.baseMask, cell, endpoint ? bodyR * 0.8 : 0),
     [tile.baseMask, cell, endpoint, bodyR],
   );
+  // Flow pulses: dash period = half a cell, so every wire segment starts on a
+  // whole period and all tiles share one phase (pulses line up across tiles).
+  const flow = useMemo(
+    () => flowPath(tile.baseMask, inPort ? rotateMask(inPort, -tile.rotation) : 0, cell, endpoint ? bodyR * 0.8 : 0),
+    [tile.baseMask, tile.rotation, inPort, cell, endpoint, bodyR],
+  );
+  const period = cell / 2;
+  const flowPhase = useDerivedValue(() => period - ((clock.value * cell) / motion.flowCellMs) % period);
   const hatch = useMemo(() => hatchPath(cell, cell / 6, inset * 3), [cell, inset]);
   const origin = useMemo(() => vec(center, center), [center]);
   const translate = useMemo(() => [{ translateX: x * cell }, { translateY: y * cell }], [x, y, cell]);
@@ -146,14 +156,25 @@ function TileNodeImpl(props: TileNodeProps) {
         </Group>
         <Group opacity={coreOpacity}>
           <Path path={wire} style="stroke" strokeWidth={wireW} strokeCap="round" color={hue} />
-          <Path
-            path={wire}
-            style="stroke"
-            strokeWidth={Math.max(1.5, wireW * 0.3)}
-            strokeCap="round"
-            color={colors.text}
-            opacity={0.55}
-          />
+          {shorted ? (
+            // Non-colour cue for a short: the wire core is visibly broken.
+            <Path path={wire} style="stroke" strokeWidth={wireW * 0.5} color={colors.background}>
+              <DashPathEffect intervals={[wireW * 0.55, wireW * 0.8]} />
+            </Path>
+          ) : reduceMotion ? (
+            <Path
+              path={wire}
+              style="stroke"
+              strokeWidth={Math.max(1.5, wireW * 0.3)}
+              strokeCap="round"
+              color={colors.text}
+              opacity={0.55}
+            />
+          ) : (
+            <Path path={flow} style="stroke" strokeWidth={Math.max(1.5, wireW * 0.38)} strokeCap="round" color={colors.text} opacity={0.85}>
+              <DashPathEffect intervals={[period * 0.3, period * 0.7]} phase={flowPhase} />
+            </Path>
+          )}
         </Group>
         {isHub ? <Circle cx={center} cy={center} r={wireW * 0.85} color={colors.wireIdle} /> : null}
         {isHub ? (

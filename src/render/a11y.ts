@@ -1,4 +1,4 @@
-import { PORTS, PORT_NAME, type SignalColor, type Tile, tileMask } from '@/engine';
+import { type Evaluation, PORTS, PORT_NAME, type SignalColor, type Tile, tileMask } from '@/engine';
 
 const TYPE_LABEL: Readonly<Record<Tile['type'], string>> = {
   empty: 'Empty cell',
@@ -41,4 +41,24 @@ export function describeTile(tile: Tile, s: TileA11yState): string {
   }
   if (tile.locked && tile.type !== 'empty' && tile.type !== 'blocked') parts.push('Locked.');
   return parts.join(' ');
+}
+
+/**
+ * What changed after a move, phrased for VoiceOver (null = nothing worth
+ * announcing). Covers receivers gaining/losing power, new short circuits and
+ * completion; the tile's own label already describes its new orientation.
+ */
+export function describeChange(before: Evaluation, after: Evaluation, stars?: number): string | null {
+  if (after.solved && !before.solved) {
+    return stars !== undefined ? `Circuit complete. ${stars} of 3 stars.` : 'Circuit complete.';
+  }
+  const count = (e: Evaluation) => e.objectives.filter((o) => o.satisfied).length;
+  const total = after.objectives.length;
+  const parts: string[] = [];
+  const shorted = (e: Evaluation) => e.power.networks.some((n) => n.shorted);
+  if (shorted(after) && !shorted(before)) parts.push('Short circuit: mixed signals.');
+  const gained = count(after) - count(before);
+  if (gained > 0) parts.push(`${gained === 1 ? 'Receiver' : `${gained} receivers`} powered. ${count(after)} of ${total}.`);
+  if (gained < 0) parts.push(`Receiver lost power. ${count(after)} of ${total}.`);
+  return parts.length ? parts.join(' ') : null;
 }

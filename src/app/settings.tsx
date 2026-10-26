@@ -12,12 +12,20 @@ const MOTION_OPTIONS: { value: MotionPreference; label: string }[] = [
 ];
 
 export default function Settings() {
-  const { hapticsEnabled, motion, update } = useSettings();
+  const { hapticsEnabled, soundEnabled, motion, update } = useSettings();
   const version = Constants.expoConfig?.version ?? 'unknown';
 
   return (
     <Screen title="Settings" back scroll>
       <Section title="Feedback">
+        <Row label="Sound effects">
+          <Switch
+            value={soundEnabled}
+            onValueChange={(v) => update({ soundEnabled: v })}
+            accessibilityLabel="Sound effects"
+            trackColor={{ true: colors.electricity, false: colors.tileEdge }}
+          />
+        </Row>
         <Row label="Haptics">
           <Switch
             value={hapticsEnabled}
@@ -26,6 +34,7 @@ export default function Settings() {
             trackColor={{ true: colors.electricity, false: colors.tileEdge }}
           />
         </Row>
+        <Text style={type.caption}>Sound follows the silent switch and mixes with your own music.</Text>
       </Section>
 
       <Section title="Motion">

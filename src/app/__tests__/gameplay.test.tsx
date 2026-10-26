@@ -14,6 +14,7 @@ jest.mock('@shopify/react-native-skia', () => {
   return { Canvas: View, useClock: () => ({ value: 0 }) };
 });
 jest.mock('@/render/TileNode', () => ({ TileNode: () => null }));
+jest.mock('@/render/CompletionBurst', () => ({ CompletionBurst: () => null }));
 // Real persistence, backed by an in-memory node:sqlite database per test file.
 jest.mock('@/storage/expoDatabase', () => {
   const { openNodeDatabase } = jest.requireActual('../../../test/sqlite/nodeDatabase');

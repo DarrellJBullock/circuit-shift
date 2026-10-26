@@ -6,7 +6,7 @@ import { useProgress } from '@/state/progressStore';
 import { useSession } from '@/state/sessionStore';
 import { Button } from '@/ui/Button';
 import { Screen } from '@/ui/Screen';
-import { colors, spacing, type } from '@/ui/theme';
+import { colors, fontScale, spacing, type } from '@/ui/theme';
 
 export default function Home() {
   const results = useProgress((s) => s.results);
@@ -20,7 +20,7 @@ export default function Home() {
     <Screen>
       <View style={styles.hero}>
         <Text style={styles.kicker}>EVERCREST INTERACTIVE</Text>
-        <Text style={type.title} accessibilityRole="header">
+        <Text style={type.title} accessibilityRole="header" maxFontSizeMultiplier={fontScale.display}>
           CIRCUIT{'\n'}SHIFT
         </Text>
         <Text style={styles.tagline}>Rotate the tiles. Route the power.</Text>

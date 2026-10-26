@@ -46,13 +46,19 @@ Legend: ✅ done · 🔄 in progress · ⬜ todo · 🔑 needs an external decis
 - Note: proving optimality takes only 30–45 search states per level, because tree circuits are almost fully determined by local constraints. That makes the levels logically solvable, but more loops and ambiguity may be wanted for hard tiers (Phase 5/7 balancing)
 
 ## Phase 4: Graphics, animation, audio, accessibility
-- ⬜ Completion particle burst (restrained; disabled under reduced motion)
-- ⬜ Power-flow pulses travelling along wires
-- ⬜ Audio adapter (expo-audio) + original SFX 🔑 source or commission licensed sounds
-- ⬜ Sound toggle in Settings (hidden until audio exists)
-- ⬜ Display font 🔑 choose an OFL-licensed font
-- ⬜ Dynamic Type check; VoiceOver pass on every screen
-- ⬜ Performance profiling on a midrange iPhone (60 fps target; pause the Skia clock when idle)
+- ✅ Power-flow pulses: dashes travel away from the source along every powered wire. The dash period is half a cell, so all tiles share one phase and pulses stay continuous across tiles (seen on device). Direction comes from `inflowPort` (engine, unit-tested)
+- ✅ Completion burst: seeded Skia sparks from the source and every receiver; three animated paths in total, whatever the receiver count; not rendered under reduced motion
+- ✅ Original audio: `npm run synthesize-sfx` generates rotate/locked/connect/win/tap WAVs from sine partials and seeded noise (deterministic, Evercrest-owned). `expo-audio` adapter: ambient session (respects the silent switch, mixes with music), a pooled rotate cue, and it disables itself on failure
+- ✅ `feedback()` pairs sound and haptics per event. A "connect" chime plays when a move powers a new receiver. Sound effects toggle in Settings
+- ✅ Contrast audit as a test (WCAG 1.4.3 / 1.4.11): all text ≥ 6.8:1. Idle wires raised from 1.88:1 to 3.22:1 (`#5675A0`). Tile outlines and the blocked hatch are documented as decorative
+- ✅ Non-colour short-circuit cue (broken, dashed wire core); colour signals already use circle/diamond glyphs
+- ✅ VoiceOver announcements after each move: receivers powered or lost (with count), new short circuits, completion with stars
+- ✅ Dynamic Type: body text scales fully; dense labels capped (`fontScale`); button labels shrink to fit
+- ⬜ Listen to the SFX on a device and tune levels/timbre (they're synthesized; adjust `scripts/synthesize-sfx.ts`)
+- ⬜ Watch the completion burst on device (the simulator was in use during this phase)
+- ⬜ Device check at the largest accessibility text size (`xcrun simctl ui <device> content_size accessibility-extra-extra-extra-large`)
+- ⬜ Performance profiling on a midrange iPhone; pause the Skia clock when nothing animates (with reduced motion on it currently still ticks)
+- 🔑 Display font: pick an OFL-licensed typeface (system font for now)
 
 ## Phase 5: Remaining levels, daily challenge, hints
 - ⬜ Chapters 2 and 3 (40 levels; violet signals in chapter 3)

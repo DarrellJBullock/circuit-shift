@@ -3,7 +3,7 @@
 A premium, offline-first sci-fi puzzle game by **Evercrest Interactive**. Rotate circuit tiles to route
 power from sources to receivers. iOS first; the architecture is Android-compatible.
 
-> Status: **Phase 3 complete**: offline persistence with resume, bounded solver, level generator, and chapter 1 (20 levels), verified on the iOS simulator. See [TASKS.md](TASKS.md).
+> Status: **Phase 4 complete**: flow and completion effects, original sound effects, and an accessibility pass, on top of offline persistence and chapter 1 (20 levels). See [TASKS.md](TASKS.md).
 
 ## Quick start
 
@@ -41,10 +41,11 @@ src/levels/     Level schema, validator, authoring notation, data, registry
 src/render/     Skia board renderer, tile geometry, accessibility layer
 src/play/       Gameplay overlays (pause, completion)
 src/state/      Zustand stores (game session, progress, settings)
-src/services/   Device adapters (haptics; later audio, analytics, purchases, ads)
+src/services/   Device adapters (haptics, audio, feedback; later analytics, purchases, ads)
 src/storage/    SQLite interface, migrations, repositories, persistence wiring
 src/ui/         Theme tokens and shared components
-scripts/        Node scripts (level validation, level generation)
+scripts/        Node scripts (level validation and generation, SFX synthesis)
+assets/audio/   Original synthesized sound effects
 test/           Jest support: in-memory SQLite adapter, Reanimated mock
 ```
 

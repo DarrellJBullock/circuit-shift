@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, type ViewStyle } from 'react-native';
 
-import { MIN_TOUCH, colors, radius, spacing } from './theme';
+import { MIN_TOUCH, colors, fontScale, radius, spacing } from './theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 
@@ -44,7 +44,12 @@ export function Button({
         style,
       ]}
     >
-      <Text style={[styles.label, variant === 'primary' && styles.primaryLabel]} numberOfLines={1}>
+      <Text
+        style={[styles.label, variant === 'primary' && styles.primaryLabel]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        maxFontSizeMultiplier={fontScale.control}
+      >
         {label}
       </Text>
     </Pressable>

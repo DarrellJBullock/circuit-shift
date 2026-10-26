@@ -35,6 +35,27 @@ export function wirePath(baseMask: number, size: number, fromRadius = 0): string
   return parts.join('');
 }
 
+/**
+ * Wire path oriented for flow: the inflow segment runs edge → centre, all
+ * others centre → edge, so a dash pattern advancing along the path reads as
+ * current flowing away from the source. `inPort` is in base orientation
+ * (0 = none, e.g. a source).
+ */
+export function flowPath(baseMask: number, inPort: number, size: number, fromRadius = 0): string {
+  const c = size / 2;
+  const parts: string[] = [];
+  for (const p of PORTS) {
+    if (!hasPort(baseMask, p)) continue;
+    const [ex, ey] = edgePoint(p, size);
+    const len = Math.hypot(ex - c, ey - c);
+    const t = len === 0 ? 0 : fromRadius / len;
+    const sx = round(c + (ex - c) * t);
+    const sy = round(c + (ey - c) * t);
+    parts.push(p === inPort ? `M${round(ex)} ${round(ey)}L${sx} ${sy}` : `M${sx} ${sy}L${round(ex)} ${round(ey)}`);
+  }
+  return parts.join('');
+}
+
 /** Diamond glyph used to mark violet signals so colour is never the only cue. */
 export function diamondPath(cx: number, cy: number, r: number): string {
   return `M${round(cx)} ${round(cy - r)}L${round(cx + r)} ${round(cy)}L${round(cx)} ${round(cy + r)}L${round(cx - r)} ${round(cy)}Z`;
