@@ -26,7 +26,6 @@ decisions and on-device checks, listed below. The phase history further down rec
   consent message (DEVELOPMENT.md → Setting up RevenueCat / AdMob)
 - 🔑 Optional: designer pass on the generated icon; an OFL-licensed display font (system font for now)
 - 🔑 iPad: currently `supportsTablet: false` (portrait phone only), which avoids iPad screenshots for 1.0
-- 🔑 License or terms for the repo (the Expo template MIT `LICENSE` was removed in Phase 1)
 
 ### 3. On-device verification (TestFlight; full checklist in RELEASE.md §4)
 - ⬜ First rotation animates immediately (lag seen once in a debug build; not yet checked on device)
