@@ -2,8 +2,8 @@
  * Dynamic Expo config layered on app.json. Supplies monetization settings
  * from the environment so nothing deployment-specific is committed.
  *
- * Required for production builds (EAS profile "production"):
- *   ADMOB_IOS_APP_ID, ADMOB_ANDROID_APP_ID
+ * Required for production builds (EAS profile "production"), for the platform being built:
+ *   ADMOB_IOS_APP_ID (iOS), ADMOB_ANDROID_APP_ID (Android)
  * Optional (features stay disabled when absent):
  *   EXPO_PUBLIC_REVENUECAT_IOS_KEY, EXPO_PUBLIC_REVENUECAT_ANDROID_KEY
  *   EXPO_PUBLIC_ADMOB_REWARDED_IOS, EXPO_PUBLIC_ADMOB_REWARDED_ANDROID
@@ -19,12 +19,15 @@ const GOOGLE_SAMPLE_APP_ID = {
 } as const;
 
 const isProductionBuild = process.env.EAS_BUILD_PROFILE === 'production';
+// EAS sets this to 'ios' or 'android'. Unset (e.g. `expo config` locally) means both are checked.
+const buildPlatform = process.env.EAS_BUILD_PLATFORM;
 
 function admobAppId(platform: 'ios' | 'android'): string {
   const name = platform === 'ios' ? 'ADMOB_IOS_APP_ID' : 'ADMOB_ANDROID_APP_ID';
   const value = platform === 'ios' ? process.env.ADMOB_IOS_APP_ID : process.env.ADMOB_ANDROID_APP_ID;
   if (value) return value;
-  if (isProductionBuild) {
+  // Only the platform being built needs a real ID; the other one is never compiled in.
+  if (isProductionBuild && (buildPlatform === undefined || buildPlatform === platform)) {
     throw new Error(`${name} must be set for production builds (see DEVELOPMENT.md → Monetization).`);
   }
   return GOOGLE_SAMPLE_APP_ID[platform];
