@@ -1,12 +1,14 @@
 > **DRAFT: NOT LEGAL ADVICE. Must be reviewed by Evercrest Interactive (and counsel) before publishing.**
 > Fill in every `[[PLACEHOLDER]]`. Keep it in sync with the shipped configuration: if an analytics
-> vendor is added or ads/purchases are enabled or disabled, update the matching sections.
+> vendor is added or ads/purchases are enabled or disabled, update the matching sections. If a vendor
+> is added, the Analytics section must name it and describe the events sent (see `src/services/analytics`).
+> Set "Last updated" to the date the page is published.
 
 # Circuit Shift Privacy Policy
 
-_Last updated: [[DATE]]_
+_Last updated: 28 October 2026_
 
-Circuit Shift ("the app") is published by [[EVERCREST INTERACTIVE LEGAL NAME]] ("we", "us").
+Circuit Shift ("the app") is published by Evercrest Interactive LLC ("we", "us").
 This policy explains what information the app handles and why.
 
 ## The short version
@@ -23,26 +25,23 @@ Deleting the app deletes this data.
 Optional in-app purchases are processed by Apple. To verify purchases and restore them, the app uses
 RevenueCat, Inc., which receives an anonymous app user identifier and your App Store purchase
 receipts. RevenueCat does not receive your name or contact details from us. See RevenueCat's privacy
-policy: [[REVENUECAT PRIVACY URL]].
+policy: https://www.revenuecat.com/privacy.
 
 ## Optional rewarded ads
 The app shows an ad **only if you choose** to watch one in exchange for a hint. Ads are provided by
 Google (AdMob) and are requested as **non-personalized**. Where the law requires it (for example in the
 EEA and UK), we ask for your consent through Google's consent form before showing any ad. You can change
 your choice at any time in Settings → Ad privacy choices. Google may process device and usage
-information to deliver and measure ads and to prevent fraud; see Google's policy: [[GOOGLE ADS PRIVACY URL]].
+information to deliver and measure ads and to prevent fraud; see how Google uses information from apps that use its services:
+https://policies.google.com/technologies/partner-sites.
 
 ## Analytics
-[[CHOOSE ONE BEFORE PUBLISHING]]
-- *(Current build)* The app does not send analytics. A "Share anonymous usage data" switch exists in
-  Settings, is off by default, and has no effect because no analytics provider is configured.
-- *(If a provider is added)* When you turn on "Share anonymous usage data", the app sends gameplay
-  events (for example "level completed", move counts, hints used) to [[PROVIDER]]. They contain no
-  name, email, contacts, location or advertising identifier.
+The app does not send analytics. A "Share anonymous usage data" switch exists in Settings, is off by
+default, and has no effect because no analytics provider is used.
 
 ## Children
 The app is suitable for a general audience and does not knowingly collect personal information from
-children. [[CONFIRM AGAINST THE AGE RATING AND ANY KIDS-CATEGORY DECISION]]
+children. It is rated 4+ and is not offered in the App Store Kids category.
 
 ## Your choices
 - Turn off ads entirely by not requesting them, or by purchasing "Remove Ads".
@@ -51,7 +50,9 @@ children. [[CONFIRM AGAINST THE AGE RATING AND ANY KIDS-CATEGORY DECISION]]
 - Delete all local data: delete the app.
 
 ## Contact
-[[SUPPORT EMAIL]] · [[POSTAL ADDRESS IF REQUIRED]]
+Email: support@evercrest-interactive.com
+
+Support page: https://evercrest-interactive.com/apps/circuit-shift/support.html
 
 ## Changes
 We will update this page if our practices change and revise the "Last updated" date.

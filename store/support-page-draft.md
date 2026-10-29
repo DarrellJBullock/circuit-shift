@@ -2,7 +2,7 @@
 
 # Circuit Shift Support
 
-**Contact:** [[SUPPORT EMAIL]]. We aim to reply within [[N]] business days.
+**Contact:** support@evercrest-interactive.com. We aim to reply within [[N]] business days.
 
 ## Frequently asked questions
 
