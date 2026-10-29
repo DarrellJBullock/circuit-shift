@@ -2,12 +2,13 @@
 
 Legend: ✅ done · ⬜ todo · 🔑 needs Evercrest (account, credential or decision)
 
-**Status (2026-10-28):** all eight phases are implemented. 479 tests pass, all 60 levels validate,
-and GitHub Actions CI is green on `master`. The privacy and support URLs are wired into the app, and
-every draft in `store/` is filled in. Both pages are live on evercrest-interactive.com. Nothing is left
-to do in the repo: what remains is legal review, account setup, decisions and on-device checks, listed
-below. The phase history further
-down records what was built.
+**Status (2026-10-29):** all eight phases are implemented. 479 tests pass, all 60 levels validate,
+and GitHub Actions CI is green on `master`. The privacy and support URLs are wired into the app, every
+draft in `store/` is filled in, and both pages are live on evercrest-interactive.com. The App Store
+Connect app record exists (Apple ID `6828283301`, set as `ascAppId` in `eas.json`) with a 4+ age
+rating. Nothing is left to do in the repo: what remains is legal review, the rest of App Store
+Connect, the EAS build, decisions and on-device checks, listed below. The phase history further down
+records what was built.
 
 ## Remaining work
 
@@ -18,10 +19,14 @@ down records what was built.
   `evercrest-interactive` site repo; text from `store/privacy-policy-draft.md`). After review: add a
   postal address if counsel requires one, remove the banner, update the date, and keep the draft in
   this repo in sync
-- 🔑 App Store Connect: app record, the "Remove Ads" IAP (only this one for 1.0), listing
-  (`store/listing.md`), age rating (`store/age-rating.md`), privacy labels (RELEASE.md §3), the six
-  screenshots (`store/screenshots/`), and the App Review contact (name, phone, email; deliberately
-  not stored in this public repo)
+- ✅ App Store Connect: bundle ID registered, app record created (Apple ID `6828283301`), age rating
+  answered (4+, not Made for Kids)
+- 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), App
+  Privacy (policy URL + labels from RELEASE.md §3, Tracking: No), Pricing and Availability (Free;
+  decide on South Korea, which may need a game rating number), the "Remove Ads" IAP (only this one for
+  1.0), the version page from `store/listing.md` with the six screenshots (`store/screenshots/`) and
+  support URL, and the App Review contact (name, phone, email; deliberately not stored in this public
+  repo). If 1.0 ships without rewarded ads, change the age rating's Advertising answer to No
 - 🔑 Set `ADMOB_IOS_APP_ID` in EAS (production builds fail without it). Optional:
   `EXPO_PUBLIC_ADMOB_REWARDED_IOS`, `EXPO_PUBLIC_REVENUECAT_IOS_KEY`; features ship disabled without them
 - 🔑 `eas build -p ios --profile production`, then `eas submit` (Apple credentials); TestFlight pass (§3 below);
