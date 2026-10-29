@@ -16,7 +16,8 @@ Circuit Shift is an offline puzzle game. No account or sign-in is required, so n
 - **Privacy:** game progress is stored locally on the device. Privacy policy: https://evercrest-interactive.com/apps/circuit-shift/privacy.html (also linked from Settings).
 
 ## Contact
-[[NAME]] · [[PHONE]] · [[EMAIL]]
+Entered in App Store Connect (App Review Information → Contact Information): name, phone and email of
+the person App Review should reach. Not stored in this public repo.
 
 ## Export compliance
 `ITSAppUsesNonExemptEncryption = false` (set in app.json): the app uses only standard OS encryption.
