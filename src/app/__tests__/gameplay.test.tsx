@@ -200,4 +200,11 @@ describe('settings', () => {
     await fireEvent.press(await screen.findByTestId('settings-privacy-policy'));
     expect(open).toHaveBeenCalledWith(links.PRIVACY_POLICY_URL);
   });
+
+  it('opens the published support page', async () => {
+    const open = jest.spyOn(links, 'openExternal').mockResolvedValue();
+    await renderRouter(APP_DIR, { initialUrl: '/settings' });
+    await fireEvent.press(await screen.findByTestId('settings-support'));
+    expect(open).toHaveBeenCalledWith(links.SUPPORT_URL);
+  });
 });

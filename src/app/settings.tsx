@@ -23,7 +23,6 @@ export default function Settings() {
   const storeReady = purchases.status().state === 'ready';
   const adsConfigured = ads.status().state !== 'disabled';
   const version = Constants.expoConfig?.version ?? 'unknown';
-  const supportUrl = SUPPORT_URL;
 
   return (
     <Screen title="Settings" back scroll>
@@ -108,14 +107,13 @@ export default function Settings() {
           testID="settings-privacy-policy"
           onPress={() => void openExternal(PRIVACY_POLICY_URL)}
         />
-        {supportUrl === null ? (
-          <View style={styles.config}>
-            <Text style={styles.configTitle}>REQUIRED CONFIGURATION · NOT YET SET</Text>
-            <Text style={type.caption}>Support URL — must be published before App Store submission.</Text>
-          </View>
-        ) : (
-          <Button label="Support" variant="secondary" compact onPress={() => void openExternal(supportUrl)} />
-        )}
+        <Button
+          label="Support"
+          variant="secondary"
+          compact
+          testID="settings-support"
+          onPress={() => void openExternal(SUPPORT_URL)}
+        />
       </Section>
 
       <Section title="About">
@@ -166,13 +164,4 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   segmentOn: { backgroundColor: colors.electricity },
-  config: {
-    borderColor: colors.source,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderRadius: radius.md,
-    padding: spacing.md,
-    gap: spacing.xs,
-  },
-  configTitle: { color: colors.source, fontSize: 12, fontWeight: '700', letterSpacing: 1.5 },
 });

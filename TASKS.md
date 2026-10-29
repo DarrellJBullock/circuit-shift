@@ -12,8 +12,8 @@ decisions and on-device checks, listed below. The phase history further down rec
 - 🔑 Make sure the privacy policy is live at https://evercrest-interactive.com/apps/circuit-shift/privacy.html
   and matches the reviewed draft (`store/privacy-policy-draft.md`; needs legal review). The URL is wired into
   Settings and the docs (`src/services/links.ts`)
-- 🔑 Publish the support page (draft: `store/support-page-draft.md`), then set `SUPPORT_URL` in
-  `src/services/links.ts` and add it to `store/listing.md` and App Store Connect
+- 🔑 Make sure the support page is live at https://evercrest-interactive.com/apps/circuit-shift/support.html
+  (draft: `store/support-page-draft.md`; fill in its contact placeholders). The URL is wired into Settings and the docs
 - 🔑 App Store Connect: app record, the "Remove Ads" IAP (only this one for 1.0), listing, age rating,
   privacy labels (drafts in `store/` and RELEASE.md §3)
 - 🔑 Set `ADMOB_IOS_APP_ID` in EAS (production builds fail without it). Optional:

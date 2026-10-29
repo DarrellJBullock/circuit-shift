@@ -10,7 +10,7 @@
 A premium, offline-first sci-fi puzzle game by **Evercrest Interactive**. Rotate circuit tiles to route
 power from sources to receivers. iOS first; the architecture is Android-compatible.
 
-> Status: **1.0.0 release candidate**: all eight phases are implemented, and App Store screenshots and listing drafts are ready. Store submission is waiting on Evercrest accounts and the privacy/support URLs; see [RELEASE.md](RELEASE.md), [store/](store/) and [TASKS.md](TASKS.md).
+> Status: **1.0.0 release candidate**: all eight phases are implemented, and App Store screenshots and listing drafts are ready. Store submission is waiting on Evercrest accounts and on publishing the privacy and support pages; see [RELEASE.md](RELEASE.md), [store/](store/) and [TASKS.md](TASKS.md).
 
 ## Quick start
 
@@ -63,7 +63,7 @@ These are **not configured** and must be supplied by Evercrest Interactive:
 | Item | Where | Status |
 |---|---|---|
 | Privacy policy URL | `src/services/links.ts` (Settings), App Store Connect | https://evercrest-interactive.com/apps/circuit-shift/privacy.html |
-| Support URL | Settings screen, App Store Connect | **NOT SET** |
+| Support URL | `src/services/links.ts` (Settings), App Store Connect | https://evercrest-interactive.com/apps/circuit-shift/support.html |
 | Bundle identifier | `app.json` → `com.evercrestinteractive.circuitshift` | confirmed |
 | Apple Team / EAS project | `eas init`, `eas.json` | not set up |
 | RevenueCat public SDK key & products | `EXPO_PUBLIC_REVENUECAT_IOS_KEY` + dashboard (DEVELOPMENT.md) | **not set**: store disabled |
