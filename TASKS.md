@@ -37,12 +37,14 @@ records what was built.
 - 🔑 RevenueCat, still to do: the Default offering with a **custom** package `remove_ads` containing
   the product (the app looks for exactly that identifier in the current offering), then
   `env:set EXPO_PUBLIC_REVENUECAT_IOS_KEY` with the public `appl_` key
-- ✅ AdMob: Circuit Shift iOS app created
+- ✅ AdMob: Circuit Shift iOS app created; payments profile and US tax info complete (banner cleared);
+  GDPR ad partners set to Google's common list (198), with automatic additions on
 - 🔑 AdMob, still to do: `env:set ADMOB_IOS_APP_ID` with the App ID (the `~` one; **required**: production
-  builds fail without it); payments profile tax info (W-9) and any verification, which clears the
-  "Payment setup incomplete" banner. For rewarded ads in 1.0: a Rewarded ad unit, `env:set
-  EXPO_PUBLIC_ADMOB_REWARDED_IOS`, and a published GDPR consent message. Link the app to its App Store
-  listing after launch so AdMob can finish reviewing it
+  builds fail without it). For rewarded ads in 1.0: a **Rewarded** ad unit named `Hint` (reward 1 ×
+  `hint`, no server-side verification), `env:set EXPO_PUBLIC_ADMOB_REWARDED_IOS` with its `/` ID, and
+  **publish** the European regulations (GDPR) message with "Do not consent" turned on and the privacy
+  policy URL. Optional: a US states message (decide with the legal review). Link the app to its App
+  Store listing after launch so AdMob can finish reviewing it ("Requires review" until then)
 - 🔑 `eas build -p ios --profile production`, then `eas submit` (Apple credentials); TestFlight pass (§3 below);
   Submit for Review
 
