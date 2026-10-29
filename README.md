@@ -1,5 +1,6 @@
 # Circuit Shift
 
+[![CI](https://github.com/DarrellJBullock/circuit-shift/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DarrellJBullock/circuit-shift/actions/workflows/ci.yml)
 ![Expo SDK 58](https://img.shields.io/badge/Expo-SDK_58-000020?logo=expo&logoColor=white)
 ![React Native 0.88](https://img.shields.io/badge/React_Native-0.88-61DAFB?logo=react&logoColor=black)
 ![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
