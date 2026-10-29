@@ -21,8 +21,8 @@ App Store Connect:
 - Create **one** non-consumable in-app purchase for 1.0: "Remove Ads". Do not create or submit
   "Premium Chapters" or "Founder Bundle": the app hides them until a premium chapter ships (see
   `store/review-notes.md`; RevenueCat setup in DEVELOPMENT.md).
-- Note the app's **Apple ID** (App Information → General Information). Optionally add it to
-  `eas.json` → `submit.production.ios.ascAppId` so `eas submit` doesn't ask which app to use.
+- ✅ App record created; its **Apple ID** `6828283301` is set as `submit.production.ios.ascAppId` in
+  `eas.json`, so `eas submit` uploads to it without asking.
 
 EAS environment variables, **production** environment, for example:
 
