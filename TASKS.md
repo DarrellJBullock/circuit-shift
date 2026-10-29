@@ -2,20 +2,24 @@
 
 Legend: ✅ done · ⬜ todo · 🔑 needs Evercrest (account, credential or decision)
 
-**Status (2026-10-28):** all eight phases are implemented. 470 tests pass, all 60 levels validate,
-and App Store screenshots and listing drafts are in `store/`. What remains is account setup,
-decisions and on-device checks, listed below. The phase history further down records what was built.
+**Status (2026-10-28):** all eight phases are implemented. 479 tests pass, all 60 levels validate,
+and GitHub Actions CI is green on `master`. The privacy and support URLs are wired into the app, and
+every draft in `store/` is filled in. Nothing is left to do in the repo: what remains is publishing the
+two web pages, account setup, decisions and on-device checks, listed below. The phase history further
+down records what was built.
 
 ## Remaining work
 
 ### 1. Blocking App Store submission (🔑)
-- 🔑 Make sure the privacy policy is live at https://evercrest-interactive.com/apps/circuit-shift/privacy.html
-  and matches the reviewed draft (`store/privacy-policy-draft.md`; needs legal review). The URL is wired into
-  Settings and the docs (`src/services/links.ts`)
-- 🔑 Make sure the support page is live at https://evercrest-interactive.com/apps/circuit-shift/support.html
-  (draft: `store/support-page-draft.md`; fill in its contact placeholders). The URL is wired into Settings and the docs
-- 🔑 App Store Connect: app record, the "Remove Ads" IAP (only this one for 1.0), listing, age rating,
-  privacy labels (drafts in `store/` and RELEASE.md §3)
+- 🔑 Legal review of `store/privacy-policy-draft.md` (complete; add a postal address if counsel requires
+  one), then publish it at https://evercrest-interactive.com/apps/circuit-shift/privacy.html with
+  "Last updated" set to the publish date. Both URLs currently return 404
+- 🔑 Publish `store/support-page-draft.md` (complete) at
+  https://evercrest-interactive.com/apps/circuit-shift/support.html
+- 🔑 App Store Connect: app record, the "Remove Ads" IAP (only this one for 1.0), listing
+  (`store/listing.md`), age rating (`store/age-rating.md`), privacy labels (RELEASE.md §3), the six
+  screenshots (`store/screenshots/`), and the App Review contact (name, phone, email; deliberately
+  not stored in this public repo)
 - 🔑 Set `ADMOB_IOS_APP_ID` in EAS (production builds fail without it). Optional:
   `EXPO_PUBLIC_ADMOB_REWARDED_IOS`, `EXPO_PUBLIC_REVENUECAT_IOS_KEY`; features ship disabled without them
 - 🔑 `eas build -p ios --profile production`, then `eas submit` (Apple credentials); TestFlight pass (§3 below);
@@ -23,7 +27,8 @@ decisions and on-device checks, listed below. The phase history further down rec
 
 ### 2. Decisions (🔑)
 - 🔑 "Remove Ads" price, and confirm it means unlimited hints without videos (there are no other ads)
-- 🔑 Analytics vendor, or none. The privacy policy must match the choice
+- 🔑 Analytics vendor: none for 1.0, and the privacy policy says so. Adding one means updating the policy
+  and the privacy labels
 - 🔑 To enable monetization: RevenueCat project and public SDK key; AdMob app, rewarded unit and a published
   consent message (DEVELOPMENT.md → Setting up RevenueCat / AdMob)
 - 🔑 Optional: designer pass on the generated icon; an OFL-licensed display font (system font for now)
@@ -147,3 +152,7 @@ decisions and on-device checks, listed below. The phase history further down rec
 - ✅ Review-risk fix: premium products hidden until premium content exists
 - ✅ Six App Store screenshots from the Release build (`store/screenshots/`)
 - ✅ Bundle ID `com.evercrestinteractive.circuitshift` confirmed
+- ✅ Public GitHub repo with README badges and topics; GitHub Actions CI (`npm run check` + listing limits)
+- ✅ Privacy policy and support URLs in `src/services/links.ts`, linked from Settings and the store docs;
+  a test fails if a URL placeholder returns
+- ✅ Privacy policy, support page, age rating and review notes drafts filled in
