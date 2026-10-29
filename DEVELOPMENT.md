@@ -152,11 +152,13 @@ without a store or ad-SDK confirmation.
   `levels/progression.ts`.
 
 ### Setting up RevenueCat
-1. App Store Connect: create three **non-consumable** products (IDs of your choice).
-2. RevenueCat: create entitlements named exactly **`no_ads`** and **`premium_content`**. Attach
-   remove-ads → `no_ads`, premium chapter → `premium_content`, founder bundle → both.
-3. RevenueCat: in the **current** offering, add packages with identifiers **`remove_ads`**,
-   **`premium_chapter`** and **`founder_bundle`**.
+1. App Store Connect: for 1.0, create **one non-consumable** product, Remove Ads (ID of your choice).
+   The premium chapter and founder bundle products come later, when a premium chapter ships; the Shop
+   hides them until then (`isOffered()` in `src/app/shop.tsx`).
+2. RevenueCat: create the entitlement **`no_ads`** and attach the Remove Ads product to it. Later, add
+   **`premium_content`** and attach premium chapter → `premium_content`, founder bundle → both.
+3. RevenueCat: in the **current** offering, add a package with identifier **`remove_ads`**. Later, add
+   **`premium_chapter`** and **`founder_bundle`**. Names must match exactly.
 4. Set `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (the *public* SDK key) in the EAS environment. Never use a
    secret key in the client.
 

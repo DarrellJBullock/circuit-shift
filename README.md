@@ -65,7 +65,8 @@ These are **not configured** and must be supplied by Evercrest Interactive:
 | Privacy policy URL | `src/services/links.ts` (Settings), App Store Connect | https://evercrest-interactive.com/apps/circuit-shift/privacy.html |
 | Support URL | `src/services/links.ts` (Settings), App Store Connect | https://evercrest-interactive.com/apps/circuit-shift/support.html |
 | Bundle identifier | `app.json` → `com.evercrestinteractive.circuitshift` | confirmed |
-| Apple Team / EAS project | `eas init`, `eas.json` | not set up |
+| EAS project | `app.json` → `extra.eas.projectId`, `eas.json` | linked: `@djb215/circuit-shift` |
+| Apple signing | created by EAS on the first production build (RELEASE.md) | **not set** |
 | RevenueCat public SDK key & products | `EXPO_PUBLIC_REVENUECAT_IOS_KEY` + dashboard (DEVELOPMENT.md) | **not set**: store disabled |
 | AdMob app ID & rewarded unit | `ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_REWARDED_IOS` + consent message | **not set**: dev uses Google test IDs; production builds refuse to build |
 | Analytics vendor | `setAnalyticsSink()` | **none**: nothing is sent |
