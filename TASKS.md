@@ -2,12 +2,12 @@
 
 Legend: ✅ done · ⬜ todo · 🔑 needs Evercrest (account, credential or decision)
 
-**Status (2026-10-29):** all eight phases are implemented. 479 tests pass, all 60 levels validate,
+**Status (2026-10-29):** all eight phases are implemented. 484 tests pass, all 60 levels validate,
 and GitHub Actions CI is green on `master`. The privacy and support URLs are wired into the app, every
-draft in `store/` is filled in, and both pages are live on evercrest-interactive.com. The App Store
-Connect app record exists (Apple ID `6828283301`, set as `ascAppId` in `eas.json`) with a 4+ age
-rating. Nothing is left to do in the repo: what remains is legal review, the rest of App Store
-Connect, the EAS build, decisions and on-device checks, listed below. The phase history further down
+draft in `store/` is filled in, and both pages are live on evercrest-interactive.com. App Store Connect
+has the app record (Apple ID `6828283301`, `ascAppId` in `eas.json`), a 4+ age rating and the "Remove
+Ads" product; RevenueCat and AdMob are partly set up. Nothing is left to do in the repo: what remains is
+account setup, the EAS build, legal review, decisions and on-device checks, listed below. The phase history further down
 records what was built.
 
 ## Remaining work
@@ -21,23 +21,38 @@ records what was built.
   this repo in sync
 - ✅ App Store Connect: bundle ID registered, app record created (Apple ID `6828283301`), age rating
   answered (4+, not Made for Kids)
-- 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), App
-  Privacy (policy URL + labels from RELEASE.md §3, Tracking: No), Pricing and Availability (Free;
-  decide on South Korea, which may need a game rating number), the "Remove Ads" IAP (only this one for
-  1.0), the version page from `store/listing.md` with the six screenshots (`store/screenshots/`) and
-  support URL, and the App Review contact (name, phone, email; deliberately not stored in this public
-  repo). If 1.0 ships without rewarded ads, change the age rating's Advertising answer to No
-- 🔑 Set `ADMOB_IOS_APP_ID` in EAS (production builds fail without it). Optional:
-  `EXPO_PUBLIC_ADMOB_REWARDED_IOS`, `EXPO_PUBLIC_REVENUECAT_IOS_KEY`; features ship disabled without them
+- ✅ "Remove Ads" IAP in App Store Connect: non-consumable
+  `com.evercrestinteractive.circuitshift.removeads`, price, English display name and description.
+  Still needs the review screenshot (take it from the Shop in a TestFlight build once the RevenueCat
+  key is set) and is submitted together with version 1.0. Family Sharing: Evercrest's call
+- 🔑 App Store Connect, still to do: the **Paid Apps agreement** (bank and tax; purchases don't load
+  without it, even in sandbox), App Information (subtitle, Games › Puzzle, content rights), App Privacy
+  (policy URL + labels from RELEASE.md §3, Tracking: No), Pricing and Availability (Free; decide on
+  South Korea, which may need a game rating number), the version page from `store/listing.md` with the
+  six screenshots (`store/screenshots/`), support URL and App Review contact (name, phone, email;
+  deliberately not stored in this public repo). If 1.0 ships without rewarded ads, change the age
+  rating's Advertising answer to No
+- ✅ RevenueCat: project, App Store app, In-App Purchase key and App Store Connect API key uploaded,
+  product attached to the `no_ads` entitlement
+- 🔑 RevenueCat, still to do: the Default offering with a **custom** package `remove_ads` containing
+  the product (the app looks for exactly that identifier in the current offering), then
+  `env:set EXPO_PUBLIC_REVENUECAT_IOS_KEY` with the public `appl_` key
+- ✅ AdMob: Circuit Shift iOS app created
+- 🔑 AdMob, still to do: `env:set ADMOB_IOS_APP_ID` with the App ID (the `~` one; **required**: production
+  builds fail without it); payments profile tax info (W-9) and any verification, which clears the
+  "Payment setup incomplete" banner. For rewarded ads in 1.0: a Rewarded ad unit, `env:set
+  EXPO_PUBLIC_ADMOB_REWARDED_IOS`, and a published GDPR consent message. Link the app to its App Store
+  listing after launch so AdMob can finish reviewing it
 - 🔑 `eas build -p ios --profile production`, then `eas submit` (Apple credentials); TestFlight pass (§3 below);
   Submit for Review
 
 ### 2. Decisions (🔑)
-- 🔑 "Remove Ads" price, and confirm it means unlimited hints without videos (there are no other ads)
+- ✅ "Remove Ads" price set in App Store Connect; it means unlimited hints without videos (there are no
+  other ads)
 - 🔑 Analytics vendor: none for 1.0, and the privacy policy says so. Adding one means updating the policy
   and the privacy labels
-- 🔑 To enable monetization: RevenueCat project and public SDK key; AdMob app, rewarded unit and a published
-  consent message (DEVELOPMENT.md → Setting up RevenueCat / AdMob)
+- 🔑 Whether 1.0 shows rewarded ads ("Hint · Ad"); setup steps are in §1 and DEVELOPMENT.md → Setting up
+  AdMob
 - 🔑 Optional: designer pass on the generated icon; an OFL-licensed display font (system font for now)
 - 🔑 iPad: currently `supportsTablet: false` (portrait phone only), which avoids iPad screenshots for 1.0
 
@@ -165,3 +180,5 @@ records what was built.
 - ✅ Privacy policy, support page, age rating and review notes drafts filled in
 - ✅ Privacy and support pages published on evercrest-interactive.com (site PR #1); the `.html` URLs
   redirect to them
+- ✅ Fix: iOS production builds no longer require an Android AdMob app ID (`app.config.ts` checks
+  `EAS_BUILD_PLATFORM`; covered by `src/__tests__/appConfig.test.ts`)
