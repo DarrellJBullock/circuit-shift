@@ -1,9 +1,15 @@
 # Circuit Shift
 
+![Expo SDK 58](https://img.shields.io/badge/Expo-SDK_58-000020?logo=expo&logoColor=white)
+![React Native 0.88](https://img.shields.io/badge/React_Native-0.88-61DAFB?logo=react&logoColor=black)
+![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![Platform iOS](https://img.shields.io/badge/platform-iOS-lightgrey?logo=apple)
+![Offline first](https://img.shields.io/badge/offline-first-37DDF7)
+
 A premium, offline-first sci-fi puzzle game by **Evercrest Interactive**. Rotate circuit tiles to route
 power from sources to receivers. iOS first; the architecture is Android-compatible.
 
-> Status: **1.0.0 release candidate**: all eight phases are implemented. Store submission is waiting on Evercrest accounts, URLs and screenshots; see [RELEASE.md](RELEASE.md), [store/](store/) and [TASKS.md](TASKS.md). See [TASKS.md](TASKS.md).
+> Status: **1.0.0 release candidate**: all eight phases are implemented, and App Store screenshots and listing drafts are ready. Store submission is waiting on Evercrest accounts and the privacy/support URLs; see [RELEASE.md](RELEASE.md), [store/](store/) and [TASKS.md](TASKS.md).
 
 ## Quick start
 
