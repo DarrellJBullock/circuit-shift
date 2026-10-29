@@ -13,7 +13,7 @@ Circuit Shift is an offline puzzle game. No account or sign-in is required, so n
 - **Ads:** rewarded video only, shown only when the player taps "Hint · Ad" after using the three
   free hints in a level. There are no banners, interstitials or app-open ads. Ads are
   non-personalized; the app does not request App Tracking Transparency.
-- **Privacy:** game progress is stored locally on the device. See the privacy policy URL.
+- **Privacy:** game progress is stored locally on the device. Privacy policy: https://evercrest-interactive.com/apps/circuit-shift/privacy.html (also linked from Settings).
 
 ## Contact
 [[NAME]] · [[PHONE]] · [[EMAIL]]

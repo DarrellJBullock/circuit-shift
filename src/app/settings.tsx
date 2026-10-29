@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { ads } from '@/services/ads';
 import { analyticsProviderName } from '@/services/analytics/analytics';
+import { PRIVACY_POLICY_URL, SUPPORT_URL, openExternal } from '@/services/links';
 import { purchases } from '@/services/purchases';
 import { type MotionPreference, useSettings } from '@/state/settingsStore';
 import { Button } from '@/ui/Button';
@@ -22,6 +23,7 @@ export default function Settings() {
   const storeReady = purchases.status().state === 'ready';
   const adsConfigured = ads.status().state !== 'disabled';
   const version = Constants.expoConfig?.version ?? 'unknown';
+  const supportUrl = SUPPORT_URL;
 
   return (
     <Screen title="Settings" back scroll>
@@ -99,11 +101,21 @@ export default function Settings() {
             : 'Purchases are not configured in this build.'}
         </Text>
         <Button label="Restore purchases" variant="secondary" compact onPress={() => router.push('/shop')} />
-        <View style={styles.config}>
-          <Text style={styles.configTitle}>REQUIRED CONFIGURATION · NOT YET SET</Text>
-          <Text style={type.caption}>Privacy policy URL — must be published before App Store submission.</Text>
-          <Text style={type.caption}>Support URL — must be published before App Store submission.</Text>
-        </View>
+        <Button
+          label="Privacy policy"
+          variant="secondary"
+          compact
+          testID="settings-privacy-policy"
+          onPress={() => void openExternal(PRIVACY_POLICY_URL)}
+        />
+        {supportUrl === null ? (
+          <View style={styles.config}>
+            <Text style={styles.configTitle}>REQUIRED CONFIGURATION · NOT YET SET</Text>
+            <Text style={type.caption}>Support URL — must be published before App Store submission.</Text>
+          </View>
+        ) : (
+          <Button label="Support" variant="secondary" compact onPress={() => void openExternal(supportUrl)} />
+        )}
       </Section>
 
       <Section title="About">

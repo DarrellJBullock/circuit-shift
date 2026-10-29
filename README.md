@@ -62,7 +62,7 @@ These are **not configured** and must be supplied by Evercrest Interactive:
 
 | Item | Where | Status |
 |---|---|---|
-| Privacy policy URL | Settings screen, App Store Connect | **NOT SET** |
+| Privacy policy URL | `src/services/links.ts` (Settings), App Store Connect | https://evercrest-interactive.com/apps/circuit-shift/privacy.html |
 | Support URL | Settings screen, App Store Connect | **NOT SET** |
 | Bundle identifier | `app.json` → `com.evercrestinteractive.circuitshift` | confirmed |
 | Apple Team / EAS project | `eas init`, `eas.json` | not set up |

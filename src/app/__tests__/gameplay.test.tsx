@@ -3,6 +3,7 @@ import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-li
 
 import { tapDistance } from '@/engine';
 import { getLevel } from '@/levels/registry';
+import * as links from '@/services/links';
 import { useGame } from '@/state/gameStore';
 import { useProgress } from '@/state/progressStore';
 import { useSession } from '@/state/sessionStore';
@@ -189,5 +190,14 @@ describe('gameplay flow', () => {
   it('shows a recoverable screen for an unknown level id', async () => {
     await renderRouter(APP_DIR, { initialUrl: '/play/does-not-exist' });
     expect(await screen.findByText('Level not found')).toBeTruthy();
+  });
+});
+
+describe('settings', () => {
+  it('opens the published privacy policy', async () => {
+    const open = jest.spyOn(links, 'openExternal').mockResolvedValue();
+    await renderRouter(APP_DIR, { initialUrl: '/settings' });
+    await fireEvent.press(await screen.findByTestId('settings-privacy-policy'));
+    expect(open).toHaveBeenCalledWith(links.PRIVACY_POLICY_URL);
   });
 });

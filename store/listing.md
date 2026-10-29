@@ -43,10 +43,10 @@ Primary: Games › Puzzle · Secondary: Games › Board (optional)
 ## What's New (1.0.0)
 Welcome to Circuit Shift! 60 puzzles, a Daily Challenge, and an accessible, offline-first design.
 
-## URLs (🔑 required, not yet published)
+## URLs (🔑 Support URL still required)
 - Support URL: REQUIRED CONFIGURATION · NOT YET SET
 - Marketing URL (optional): REQUIRED CONFIGURATION · NOT YET SET
-- Privacy Policy URL: REQUIRED CONFIGURATION · NOT YET SET
+- Privacy Policy URL: https://evercrest-interactive.com/apps/circuit-shift/privacy.html
 
 ## Copyright
 © 2026 Evercrest Interactive

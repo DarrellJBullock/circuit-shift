@@ -53,7 +53,8 @@ Google's and RevenueCat's current disclosures before submitting.**
     advertising data, crash and performance data, coarse location (IP). See Google's disclosure.
   - RevenueCat (only when the store is configured): purchase history, anonymous app user ID.
   - Analytics: none unless a vendor is added. Then update this section and the policy.
-- **Privacy policy URL:** 🔑 required. Settings shows it as "REQUIRED CONFIGURATION · NOT YET SET".
+- **Privacy policy URL:** https://evercrest-interactive.com/apps/circuit-shift/privacy.html (`src/services/links.ts`, linked from Settings). Enter it in App Store Connect,
+  and make sure the published page matches the reviewed policy.
 - **Support URL:** 🔑 required.
 
 ## 4. Release regression checklist (manual, on the TestFlight build)
