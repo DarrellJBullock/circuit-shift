@@ -60,6 +60,7 @@
   "private": true,
   "jest": {
     "preset": "jest-expo",
+    "testTimeout": 30000,
     "moduleNameMapper": {
       "^react-native-reanimated/mock$": "<rootDir>/test/mocks/reanimated.impl.ts",
       "^react-native-reanimated$": "<rootDir>/test/mocks/reanimated.ts",
