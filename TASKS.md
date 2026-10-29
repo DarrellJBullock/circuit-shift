@@ -4,18 +4,20 @@ Legend: ✅ done · ⬜ todo · 🔑 needs Evercrest (account, credential or dec
 
 **Status (2026-10-28):** all eight phases are implemented. 479 tests pass, all 60 levels validate,
 and GitHub Actions CI is green on `master`. The privacy and support URLs are wired into the app, and
-every draft in `store/` is filled in. Nothing is left to do in the repo: what remains is publishing the
-two web pages, account setup, decisions and on-device checks, listed below. The phase history further
+every draft in `store/` is filled in. Both pages are live on evercrest-interactive.com. Nothing is left
+to do in the repo: what remains is legal review, account setup, decisions and on-device checks, listed
+below. The phase history further
 down records what was built.
 
 ## Remaining work
 
 ### 1. Blocking App Store submission (🔑)
-- 🔑 Legal review of `store/privacy-policy-draft.md` (complete; add a postal address if counsel requires
-  one), then publish it at https://evercrest-interactive.com/apps/circuit-shift/privacy.html with
-  "Last updated" set to the publish date. Both URLs currently return 404
-- 🔑 Publish `store/support-page-draft.md` (complete) at
-  https://evercrest-interactive.com/apps/circuit-shift/support.html
+- 🔑 Legal review of the privacy policy. It is live at
+  https://evercrest-interactive.com/apps/circuit-shift/privacy.html with the site's "Draft — requires
+  legal review" banner (source: `src/app/apps/circuit-shift/privacy/page.tsx` in the private
+  `evercrest-interactive` site repo; text from `store/privacy-policy-draft.md`). After review: add a
+  postal address if counsel requires one, remove the banner, update the date, and keep the draft in
+  this repo in sync
 - 🔑 App Store Connect: app record, the "Remove Ads" IAP (only this one for 1.0), listing
   (`store/listing.md`), age rating (`store/age-rating.md`), privacy labels (RELEASE.md §3), the six
   screenshots (`store/screenshots/`), and the App Review contact (name, phone, email; deliberately
@@ -156,3 +158,5 @@ down records what was built.
 - ✅ Privacy policy and support URLs in `src/services/links.ts`, linked from Settings and the store docs;
   a test fails if a URL placeholder returns
 - ✅ Privacy policy, support page, age rating and review notes drafts filled in
+- ✅ Privacy and support pages published on evercrest-interactive.com (site PR #1); the `.html` URLs
+  redirect to them
