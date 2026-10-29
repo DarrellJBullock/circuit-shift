@@ -13,10 +13,10 @@ Answer in App Store Connect; these reflect the current build.
 | Medical or treatment information | None | |
 | Simulated gambling | None | Stars and hints are not chance-based; no loot boxes |
 | Contests | None | |
-| Unrestricted web access | No | No web views or browser |
+| Unrestricted web access | No | No in-app browser; Settings opens two fixed pages (privacy, support) in Safari |
 | User-generated content / messaging | No | |
 | Loot boxes | No | |
-| In-app purchases | Yes | Three non-consumables |
+| In-app purchases | Yes | One non-consumable in 1.0 ("Remove Ads"); premium products stay hidden |
 | Advertising | Yes | Optional rewarded video ads |
 
 Expected result: **4+**.
