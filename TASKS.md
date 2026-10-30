@@ -51,7 +51,9 @@ records what was built.
 - 🔑 TestFlight pass (§3 below): Shop shows Remove Ads with its price (take the IAP review screenshot
   there), sandbox purchase, hints free after purchase, Restore after reinstall, rewarded ad gives exactly
   one hint (never tap a real ad)
-- 🔑 On the version 1.0 page: choose the build, add the "Remove Ads" IAP, then Submit for Review
+- ✅ Build 1.0.0 (2) selected on the version 1.0 page (the grid placeholder icon at the top of App Store
+  Connect is normal; Apple takes the icon from the build)
+- 🔑 On the version 1.0 page: add the "Remove Ads" IAP, then Submit for Review
 
 ### 2. Decisions (🔑)
 - ✅ "Remove Ads" price set in App Store Connect; it means unlimited hints without videos (there are no
