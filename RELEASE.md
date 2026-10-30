@@ -55,18 +55,30 @@ Before inviting testers: walk through the regression checklist (§4) on the Test
 
 ## 3. App Store privacy ("nutrition label") draft
 
-Based on what the code and the bundled SDK manifests do. **Re-check against the final SDK set and
-Google's and RevenueCat's current disclosures before submitting.**
+Based on what the code does and on Google's and RevenueCat's published disclosures, checked 30 October
+2026. **Re-check against the final SDK set and their current disclosures before submitting.**
 
-- **Tracking:** No. Ads are requested non-personalized only, there is no ATT prompt, and the app's
-  privacy manifest declares `NSPrivacyTracking = false`.
-- **Data collected by the app itself:** none. Progress lives in on-device SQLite only.
-- **Third-party SDKs** (declare as the dashboards require; *not linked to identity*, *not used for
-  tracking*):
-  - Google Mobile Ads (only when a player chooses a rewarded ad): device ID, product interaction,
-    advertising data, crash and performance data, coarse location (IP). See Google's disclosure.
-  - RevenueCat (only when the store is configured): purchase history, anonymous app user ID.
-  - Analytics: none unless a vendor is added. Then update this section and the policy.
+- **Tracking:** No for every data type. Ads are requested non-personalized only and there is no ATT
+  prompt. Google's own privacy manifest has not been inspected, so legal review should confirm this.
+- **Data collected by the app itself:** none. Progress lives in on-device SQLite only. The types below
+  come from Google Mobile Ads (only when a player chooses a rewarded ad) and RevenueCat.
+- **Data types to declare** (Apple counts data tied to a device, and legally defined personal data, as
+  linked):
+
+  | Data type | Source | Purposes | Linked to user | Tracking |
+  |---|---|---|---|---|
+  | Coarse Location | Google | Third-Party Advertising, Analytics | Yes | No |
+  | Device ID | Google | Third-Party Advertising, Analytics | Yes | No |
+  | Purchases | RevenueCat | App Functionality, Analytics | No | No |
+  | Product Interaction | Google | Third-Party Advertising, Analytics | Yes | No |
+  | Advertising Data | Google | Third-Party Advertising, Analytics | Yes | No |
+  | Crash Data | Google | App Functionality, Analytics, Third-Party Advertising | No | No |
+  | Performance Data | Google | Analytics, Third-Party Advertising | Yes | No |
+
+  Do not declare User ID: RevenueCat asks for it only with custom app user IDs, and this app uses its
+  anonymous ones. Linked answers are a judgment call for legal review: Google's page does not state
+  them, and the Purchases and Crash Data answers follow RevenueCat's and Google's own wording.
+- **Analytics:** none unless a vendor is added. Then update this section and the policy.
 - **Privacy policy URL:** https://evercrest-interactive.com/apps/circuit-shift/privacy.html (`src/services/links.ts`, linked from Settings). Enter it in App Store Connect,
   and make sure the published page matches the reviewed policy.
 - **Support URL:** https://evercrest-interactive.com/apps/circuit-shift/support.html (`src/services/links.ts`, linked from Settings). Enter it in App Store Connect.
