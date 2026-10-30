@@ -29,9 +29,8 @@ records what was built.
   Still needs the review screenshot (take it from the Shop in a TestFlight build once the RevenueCat
   key is set) and is submitted together with version 1.0. Family Sharing: Evercrest's call
 - ✅ Paid Apps agreement active (all countries)
-- 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), App Privacy
-  (labels in progress: enter the seven data types from the RELEASE.md §3 table, Tracking: No, then
-  Publish), Pricing and Availability (Free; decide on
+- ✅ App Privacy published: policy URL and the seven data types from the RELEASE.md §3 table, Tracking: No
+- 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), Pricing and Availability (Free; decide on
   South Korea, which may need a game rating number), the version page from `store/listing.md` with the
   six screenshots (the "medium display" iPhone slot takes `store/screenshots/6.3-inch/`, 1206×2622;
   a 6.9-inch slot takes the 1320×2868 originals), support URL and App Review contact (name, phone, email;
