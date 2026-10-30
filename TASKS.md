@@ -26,8 +26,7 @@ records what was built.
   answered (4+, not Made for Kids)
 - ✅ "Remove Ads" IAP in App Store Connect: non-consumable
   `com.evercrestinteractive.circuitshift.removeads`, price, English display name and description.
-  Still needs the review screenshot (take it from the Shop in a TestFlight build once the RevenueCat
-  key is set) and is submitted together with version 1.0. Family Sharing: Evercrest's call
+  Review screenshot uploaded. Submitted together with version 1.0. Family Sharing: Evercrest's call
 - ✅ Paid Apps agreement active (all countries)
 - ✅ App Privacy published: policy URL and the seven data types from the RELEASE.md §3 table, Tracking: No
 - 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), Pricing and Availability (Free; decide on
@@ -49,9 +48,15 @@ records what was built.
   Store listing after launch so AdMob can finish reviewing it ("Requires review" until then)
 - ✅ First production build: 1.0.0 (build 2), submitted to App Store Connect and installed through
   TestFlight
-- 🔑 TestFlight pass (§3 below): Shop shows Remove Ads with its price (take the IAP review screenshot
-  there), sandbox purchase, hints free after purchase, Restore after reinstall, rewarded ad gives exactly
-  one hint (never tap a real ad)
+- ✅ TestFlight so far: Shop shows Remove Ads at $3.99, purchase completes and stays owned after relaunch
+- 🔑 TestFlight, still to do (§3 below): Restore after reinstall, then with Remove Ads use the 3 free hints
+  and confirm the fourth is plain "Hint" with no video (the earlier hint check was a free hint, so it
+  proved nothing)
+- ⚠️ Rewarded ad blocked, not passed: on TestFlight "Hint · Ad" shows "No ad is available right now. Try
+  again later." Most likely AdMob limiting an unpublished app (not confirmed: the app does not show
+  Google's error, and a wrong unit ID would look the same). `store/review-notes.md` tells App Review.
+  After launch, link the app in AdMob, wait for approval, then retest on the store build: full ad gives
+  exactly one hint, close early gives none (never tap a real ad)
 - ✅ Build 1.0.0 (2) selected on the version 1.0 page (the grid placeholder icon at the top of App Store
   Connect is normal; Apple takes the icon from the build)
 - 🔑 On the version 1.0 page: add the "Remove Ads" IAP, then Submit for Review
@@ -73,8 +78,9 @@ records what was built.
 - ⬜ Reduce Motion (iOS setting): rotations snap, no pulses or burst
 - ⬜ Sound effects: listen and tune (`scripts/synthesize-sfx.ts`); silent switch respected
 - ⬜ Completion spark burst looks right on device
-- ⬜ Rewarded ad (with real config): consent form where required; close early → no hint
-- ⬜ Sandbox purchase, relaunch → still owned; Restore on a second device
+- ⚠️ Rewarded ad (with real config): blocked until AdMob approves the app (§1); consent form where required; close early → no hint
+- ✅ Sandbox purchase, relaunch → still owned
+- ⬜ Restore after reinstall (no second device needed for 1.0)
 - ⬜ Fresh install, force-quit → Continue, airplane mode, daily rollover at 00:00 UTC
 
 ### 4. Optional / later
