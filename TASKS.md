@@ -15,7 +15,8 @@ records what was built.
 ## Remaining work
 
 ### 1. Blocking App Store submission (🔑)
-- 🔑 Legal review of the privacy policy. It is live at
+- 🔑 Legal review of the privacy policy and the App Privacy labels (RELEASE.md §3: the linked and tracking
+  answers are judgment calls). The policy is live at
   https://evercrest-interactive.com/apps/circuit-shift/privacy.html with the site's "Draft — requires
   legal review" banner (source: `src/app/apps/circuit-shift/privacy/page.tsx` in the private
   `evercrest-interactive` site repo; text from `store/privacy-policy-draft.md`). After review: add a
@@ -29,7 +30,8 @@ records what was built.
   key is set) and is submitted together with version 1.0. Family Sharing: Evercrest's call
 - ✅ Paid Apps agreement active (all countries)
 - 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), App Privacy
-  (policy URL + labels from RELEASE.md §3, Tracking: No), Pricing and Availability (Free; decide on
+  (labels in progress: enter the seven data types from the RELEASE.md §3 table, Tracking: No, then
+  Publish), Pricing and Availability (Free; decide on
   South Korea, which may need a game rating number), the version page from `store/listing.md` with the
   six screenshots (the "medium display" iPhone slot takes `store/screenshots/6.3-inch/`, 1206×2622;
   a 6.9-inch slot takes the 1320×2868 originals), support URL and App Review contact (name, phone, email;
