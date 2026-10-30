@@ -17,3 +17,9 @@ Setup for reproducibility: the status bar was overridden to 9:41, full signal an
 Campaign progress was seeded in the simulator's local database so that chapters 2–3 were reachable.
 Partial-solve states come from applying taps from each level's verified solution.
 The build predates the 1.0.0 version bump and the Shop change; neither screen is shown.
+
+## 6.3-inch/ (1206 × 2622)
+
+The same six screens for App Store Connect's "iPhone with Dynamic Island (medium display)" slot,
+which rejects 1320 × 2868. Made from the originals with `sips` (scale to height 2622, then center-crop
+to width 1206; the crop trims under one pixel per side). Regenerate them if the originals change.
