@@ -6,9 +6,10 @@ Legend: ✅ done · ⬜ todo · 🔑 needs Evercrest (account, credential or dec
 and GitHub Actions CI is green on `master`. The privacy and support URLs are wired into the app, every
 draft in `store/` is filled in, and both pages are live on evercrest-interactive.com. App Store Connect
 has the app record (Apple ID `6828283301`, `ascAppId` in `eas.json`), a 4+ age rating and the "Remove
-Ads" product; AdMob is set up and all three EAS production variables are set, so the first
-production build can run. Nothing is left to do in the repo: what remains is
-account setup, the EAS build, legal review, decisions and on-device checks, listed below. The phase history further down
+Ads" product, and the Paid Apps agreement is active. RevenueCat and AdMob are set up, and the first
+production build (1.0.0 build 2) is installed on a device through TestFlight. Nothing is left to do in
+the repo: what remains is the TestFlight pass, the rest of the App Store Connect listing, publishing
+the GDPR message, legal review and Submit for Review, listed below. The phase history further down
 records what was built.
 
 ## Remaining work
@@ -26,17 +27,17 @@ records what was built.
   `com.evercrestinteractive.circuitshift.removeads`, price, English display name and description.
   Still needs the review screenshot (take it from the Shop in a TestFlight build once the RevenueCat
   key is set) and is submitted together with version 1.0. Family Sharing: Evercrest's call
-- 🔑 App Store Connect, still to do: the **Paid Apps agreement** (bank and tax; purchases don't load
-  without it, even in sandbox), App Information (subtitle, Games › Puzzle, content rights), App Privacy
+- ✅ Paid Apps agreement active (all countries)
+- 🔑 App Store Connect, still to do: App Information (subtitle, Games › Puzzle, content rights), App Privacy
   (policy URL + labels from RELEASE.md §3, Tracking: No), Pricing and Availability (Free; decide on
   South Korea, which may need a game rating number), the version page from `store/listing.md` with the
-  six screenshots (`store/screenshots/`), support URL and App Review contact (name, phone, email;
+  six screenshots (the "medium display" iPhone slot takes `store/screenshots/6.3-inch/`, 1206×2622;
+  a 6.9-inch slot takes the 1320×2868 originals), support URL and App Review contact (name, phone, email;
   deliberately not stored in this public repo). If 1.0 ships without rewarded ads, change the age
   rating's Advertising answer to No
 - ✅ RevenueCat: project, App Store app, In-App Purchase key and App Store Connect API key uploaded,
-  product attached to the `no_ads` entitlement
-- 🔑 RevenueCat, still to do: the Default offering with a **custom** package `remove_ads` containing
-  the product (the app looks for exactly that identifier in the current offering)
+  product attached to the `no_ads` entitlement, and the Default offering `default` with the custom
+  package `remove_ads` (the identifier the app looks for in the current offering)
 - ✅ AdMob: Circuit Shift iOS app created; payments profile and US tax info complete (banner cleared);
   GDPR ad partners set to Google's common list (198), with automatic additions on; Rewarded ad unit
   `Hint` created, so 1.0 ships with rewarded ads (age rating Advertising: Yes)
@@ -45,8 +46,12 @@ records what was built.
 - 🔑 AdMob, still to do: **publish** the European regulations (GDPR) message with "Do not consent" turned
   on and the privacy policy URL (without it, no ads in the EEA/UK). Optional: a US states message (decide with the legal review). Link the app to its App
   Store listing after launch so AdMob can finish reviewing it ("Requires review" until then)
-- 🔑 `eas build -p ios --profile production`, then `eas submit` (Apple credentials); TestFlight pass (§3 below);
-  Submit for Review
+- ✅ First production build: 1.0.0 (build 2), submitted to App Store Connect and installed through
+  TestFlight
+- 🔑 TestFlight pass (§3 below): Shop shows Remove Ads with its price (take the IAP review screenshot
+  there), sandbox purchase, hints free after purchase, Restore after reinstall, rewarded ad gives exactly
+  one hint (never tap a real ad)
+- 🔑 On the version 1.0 page: choose the build, add the "Remove Ads" IAP, then Submit for Review
 
 ### 2. Decisions (🔑)
 - ✅ "Remove Ads" price set in App Store Connect; it means unlimited hints without videos (there are no
